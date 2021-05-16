@@ -1,6 +1,6 @@
 # ElasticStack
 - work in progress
-- will contain notes and scripts used to install and configure ElasticStac, estack, for monitoring logins and app executions  
+- will contain notes and scripts used to install and configure ElasticStack, estack, for monitoring logins and app executions  
 
 
 # References
