@@ -25,7 +25,7 @@ $ sudo apt-get update && sudo apt-get install elasticsearch
 
 
 Configure deamon to start automatically:
-- To enable journalctl logging, the --quiet option must be removed from the ExecStart command line in the elasticsearch.service file. 
+- To enable journalctl logging, the --quiet option must be removed from the ExecStart command line in the elasticsearch.service file.   
 $ sudo /bin/systemctl daemon-reload  
 $ sudo /bin/systemctl enable elasticsearch.service  
 
@@ -59,7 +59,7 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html#deb-lay
 Security settings:  
 https://www.elastic.co/guide/en/elasticsearch/reference/current/auditing-settings.html  
 
-# 3. Kabana  
+# 3. Kabana Daemon  
 
 Install:  
 https://www.elastic.co/guide/en/kibana/7.12/deb.html#deb-repo  
@@ -67,13 +67,13 @@ $ sudo apt-get install apt-transport-https
 $ echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-7.x.list  
 $ sudo apt-get update && sudo apt-get install kibana  
   
-Daemon auto-start:  
-sudo /bin/systemctl daemon-reload  
-sudo /bin/systemctl enable kibana.service  
+Auto-start:  
+$ sudo /bin/systemctl daemon-reload  
+$ sudo /bin/systemctl enable kibana.service  
   
 Daemon start/stop:  
-sudo systemctl start kibana.service  
-sudo systemctl stop kibana.service  
+$ sudo systemctl start kibana.service  
+$ sudo systemctl stop kibana.service  
   
 Settings:  
 https://www.elastic.co/guide/en/kibana/7.12/settings.html  
