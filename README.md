@@ -152,5 +152,5 @@ https://github.com
 https://debian.org    
 https://xfce.org   
 https://elastic.co
-https://xmodulo.com
-https://www.linux.com
+https://xmodulo.com  
+https://www.linux.com  
