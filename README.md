@@ -21,9 +21,9 @@ https://www.elastic.co/what-is/elk-stack
 
 
 # 0. General
-- after the initial installation of ElasticSearch and Kibana the VM slowed down substantially.  The slowness is also affecting other applications on the host computer.  I expect it is due to the JVM and the system requiring general optimization.  As fresh install there are probably services that should be turned off and the estack components do require tuning for the environment.  But I also expect that the JVM is 80% of the problem.
--- after disabling a bunch of services xfce was still slow.
--- updated to 2 GB RAM resolved slowness; still need to configure JVM and new apps and test again with 1 GB RAM.
+- after the initial installation of ElasticSearch and Kibana the VM slowed down substantially.  The slowness is also affecting other applications on the host computer.  I expect it is due to the JVM and the system requiring general optimization.  As fresh install there are probably services that should be turned off and the estack components do require tuning for the environment.  But I also expect that the JVM is 80% of the problem.  
+-- after disabling a bunch of services xfce was still slow.  
+-- updated to 2 GB RAM resolved slowness; still need to configure JVM and new apps and test again with 1 GB RAM.  
 
 
 # 1. Elastic Search Service
