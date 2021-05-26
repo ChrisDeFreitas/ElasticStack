@@ -10,7 +10,7 @@ This is a work in progress and another of my archives of generally useful inform
 # References
 https://www.xmodulo.com/install-elk-stack-ubuntu.html  
 https://www.elastic.co/what-is/elk-stack  
-
+Elastic Stack download info: https://www.elastic.co/start  
 
 # Test Host
 - Debian 10 
@@ -38,7 +38,7 @@ $ echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | sudo te
 $ sudo apt-get update && sudo apt-get install elasticsearch  
 
 
-Configure deamon to start automatically:
+Configure service to start automatically:
 - To enable journalctl logging, the --quiet option must be removed from the ExecStart command line in the elasticsearch.service file.   
 $ sudo /bin/systemctl daemon-reload  
 $ sudo /bin/systemctl enable elasticsearch.service  
