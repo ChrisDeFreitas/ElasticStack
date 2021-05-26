@@ -1,10 +1,10 @@
 # ElasticStack (estack) Configuration
-- definition of ElasticStack: https://www.elastic.co/what-is/elk-stack
-- this repository contains notes and scripts used to install and configure ElasticStack on a Debian 10 virtual machine.
-- hope to monitor network activity, custom applications and logins
-- expect that the search and archiving features will be leveraged to support custom applications
-- this is another of my archives of generally useful information that I don't want to lose 
-- work in progress...
+- Definition of ElasticStack: https://www.elastic.co/what-is/elk-stack
+- purpose is to monitor network activity, custom applications and logins
+
+I hope that the four distinct applications that make up this solution will provide robust documentation and error handling, allowing this effort to be leverage for other purposes.  I have used many  monitoring solutions and found that they all had some fatal flaw that prevented them from being a total solution; typically they would fail silently on some critical feature.  
+
+This is a work in progress and another of my archives of generally useful information that I don't want to lose.  Feel free to use for your own purposes.
 
 
 # References
@@ -20,10 +20,12 @@ https://www.elastic.co/what-is/elk-stack
 
 
 
-# 0. General
-- after the initial installation of ElasticSearch and Kibana the VM slowed down substantially.  The slowness is also affecting other applications on the host computer.  I expect it is due to the JVM and the system requiring general optimization.  As fresh install there are probably services that should be turned off and the estack components do require tuning for the environment.  But I also expect that the JVM is 80% of the problem.  
--- after disabling a bunch of services xfce was still slow.  
--- updated to 2 GB RAM resolved slowness; still need to configure JVM and new apps and test again with 1 GB RAM.  
+# 0. General Notes
+- see the last section "Useful commands and scripts" for more note like info
+- after the initial installation of ElasticSearch and Kibana the VM slowed down substantially.  The slowness is also affecting other applications on the host computer.  I expect it is due to the JVM and the system requiring general optimization.  As fresh install there are probably services that should be turned off and the estack components do require tuning for the environment.  But I also expect that the JVM is 80% of the problem.
+-- after disabling a bunch of services xfce was still slow.
+-- update to 2 GB RAM resolved slowness; still need to configure JVM and new apps and test again with 1 GB RAM.
+-- Found that JVM was using 40% RAM and Xfce had a bunch of useless apps.  Need to update Xfce.
 
 
 # 1. Elastic Search Service
@@ -103,9 +105,23 @@ http://localhost:5601/app/kibana_overview#/
 
 # Useful commands and scripts
 
-Apache Log Monitoring  
+Apache Log Monitoring with estack
 http://localhost:5601/app/home#/tutorial/apacheLogs  
   
+```Bash
+# free memory	
+$ free -h   
+```
+
+```Bash
+# note: to get startup commandline add "command" to the ps column headers (after tty and before last ")
+# display top 10 cpu consumers
+$ sudo ps -e --sort -pcpu -o "%cpu %mem pri f stat pid ppid class rtprio ni pri psr start user comm time tty" | head -n 10
+# display top 10 memory consumers
+$ sudo ps -e --sort -pmem -o "%cpu %mem pri f stat pid ppid class rtprio ni pri psr start user comm time tty" | head -n 10
+# display 30 recently started apps
+$ sudo ps -e --sort -start -o "%cpu %mem pri f stat pid ppid class rtprio ni pri psr start user comm time tty" | tail -n 30
+```
 
 ```Bash
 #Status of all services
