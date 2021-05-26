@@ -114,13 +114,16 @@ $ free -h
 ```
 
 ```Bash
-# note: to get startup commandline add "command" to the ps column headers (after tty and before last ")
 # display top 10 cpu consumers
 $ sudo ps -e --sort -pcpu -o "%cpu %mem pri f stat pid ppid class rtprio ni pri psr start user comm time tty" | head -n 10
+
 # display top 10 memory consumers
 $ sudo ps -e --sort -pmem -o "%cpu %mem pri f stat pid ppid class rtprio ni pri psr start user comm time tty" | head -n 10
+
 # display 30 recently started apps
 $ sudo ps -e --sort -start -o "%cpu %mem pri f stat pid ppid class rtprio ni pri psr start user comm time tty" | tail -n 30
+
+# note: to get startup commandline add "command" to the ps column headers (after tty and before last ")
 ```
 
 ```Bash
@@ -157,7 +160,7 @@ $ sudo systemctl disable pppd-dns.service
 ```Bash
 #Service ports
 $ sudo netstat -ltup | grep java
-$ sudo netstat -ltup | grep kibana
+$ sudo netstat -ltup | grep kabana
 ```  
 
 
