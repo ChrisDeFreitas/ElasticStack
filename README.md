@@ -4,28 +4,51 @@
 
 I hope that the four distinct applications that make up this solution will provide robust documentation and error handling, allowing this effort to be leverage for other purposes.  I have used many  monitoring solutions and found that they all had some fatal flaw that prevented them from being a total solution; typically they would fail silently on some critical feature.  
 
-This is a work in progress and another of my archives of generally useful information that I don't want to lose.  Feel free to use for your own purposes.
+This is a work in progress and another of my archives of generally useful information that I don't want to lose.  Feel free to use for your own purposes.  
 
+### Sections  
+See "References" for useful links.  
+See "General Notes" to see where I am in the process.  
+See "Useful commands and scripts" for ...  
+
+1. Elastic Search Service
+2. Elastic Search Admin  
+3. Kabana Service  
+ToDo: 4. Kabana Admin
+ToDo: 5. Kabana Usage
 
 # References
 https://www.xmodulo.com/install-elk-stack-ubuntu.html  
 https://www.elastic.co/what-is/elk-stack  
 Elastic Stack download info: https://www.elastic.co/start  
 
+
+Network monitoring tools recommended in https://www.binarytides.com/linux-commands-monitor-network/
+ that I have used:  
+ --  https://linux.die.net/man/8/iftop  
+ --  https://linux.die.net/man/8/nethogs is a small 'net top' tool. Instead of breaking the traffic down per protocol or per subnet, it groups bandwidth by process (https://github.com/raboof/nethogsq).
+
+
+Apache Log Monitoring with estack  
+http://localhost:5601/app/home#/tutorial/apacheLogs  
+  
+
+
 # Test Host
-- Debian 10 
-- VMWare Virtual Machine
-- Xfce
-- 2 GB Ram, 50 GB Disk
+- Debian 10   
+- VMWare Virtual Machine  
+- 1 GB Ram, 50 GB Disk  
+- bash, Apache, nodejs  
 
 
 
-# 0. General Notes
-- see the last section "Useful commands and scripts" for more note like info
-- after the initial installation of ElasticSearch and Kibana the VM slowed down substantially.  The slowness is also affecting other applications on the host computer.  I expect it is due to the JVM and the system requiring general optimization.  As fresh install there are probably services that should be turned off and the estack components do require tuning for the environment.  But I also expect that the JVM is 80% of the problem.  
--- after disabling a bunch of services xfce was still slow.  
--- update to 2 GB RAM resolved slowness; still need to configure JVM and new apps and test again with 1 GB RAM.   
--- Found that JVM was using 40% RAM and Xfce had a bunch of useless apps.  Need to update Xfce.  
+# General Notes
+- see the last section "Useful commands and scripts" for more note like info  
+
+- changed to a new VM without https://xfce.org/ because I needed a cleaner network environment for testing  
+-- returned to 1 GB RAM because of the reduced load  
+
+- next step: install Elastic and Kabana on new VM  
 
 
 # 1. Elastic Search Service
@@ -105,9 +128,6 @@ http://localhost:5601/app/kibana_overview#/
 
 # Useful commands and scripts
 
-Apache Log Monitoring with estack
-http://localhost:5601/app/home#/tutorial/apacheLogs  
-  
 ```Bash
 # free memory	
 $ free -h   
@@ -121,9 +141,15 @@ $ sudo ps -e --sort -pcpu -o "%cpu %mem pri f stat pid ppid class rtprio ni pri 
 $ sudo ps -e --sort -pmem -o "%cpu %mem pri f stat pid ppid class rtprio ni pri psr start user comm time tty" | head -n 10
 
 # display 30 recently started apps
-$ sudo ps -e --sort -start -o "%cpu %mem pri f stat pid ppid class rtprio ni pri psr start user comm time tty" | tail -n 30
+# note: to get startup commandline add "command" to headers argument (after tty and before last ")
+$ sudo ps -e --sort -start -o "%cpu %mem pri f stat pid ppid class rtprio ni pri psr start user comm time tty" | tail -n 30  
 
-# note: to get startup commandline add "command" to the ps column headers (after tty and before last ")
+# list last 10 logins  
+$ sudo last -10 -F -i
+
+# of the last 30 logins, exclude userName  
+$ sudo last -30 -F -i | grep -v userName  
+
 ```
 
 ```Bash
@@ -137,24 +163,6 @@ $ sudo systemctl list-unit-files --type=service | grep enabled
 
 ```Bash
 #Disabled services
-$ sudo systemctl stop    avahi-daemon.socket
-$ sudo systemctl disable avahi-daemon.socket
-$ sudo systemctl stop    avahi-daemon.service
-$ sudo systemctl disable avahi-daemon.service
-$ sudo systemctl stop    ModemManager.service
-$ sudo systemctl disable ModemManager.service
-$ sudo systemctl stop    dbus-org.freedesktop.ModemManager1.service
-$ sudo systemctl disable dbus-org.freedesktop.ModemManager1.service
-$ sudo systemctl stop    dbus-org.freedesktop.nm-dispatcher.service
-$ sudo systemctl disable dbus-org.freedesktop.nm-dispatcher.service
-$ sudo systemctl stop    dbus-org.freedesktop.timesync1.service
-$ sudo systemctl disable dbus-org.freedesktop.timesync1.service
-$ sudo systemctl stop    wpa_supplicant.service
-$ sudo systemctl disable wpa_supplicant.service
-$ sudo systemctl stop    dbus-fi.w1.wpa_supplicant1.service
-$ sudo systemctl disable dbus-fi.w1.wpa_supplicant1.service
-$ sudo systemctl stop    pppd-dns.service
-$ sudo systemctl disable pppd-dns.service
 ```  
 
 ```Bash
@@ -163,9 +171,14 @@ $ sudo netstat -ltup | grep java
 $ sudo netstat -ltup | grep kabana
 ```  
 
+```Bash
+# bandwidth: top 10 consumers by ???
+$ sudo ???
+```
 
 
   
+	
 # Thanks To:  
 https://github.com    
 https://debian.org    
