@@ -2,7 +2,7 @@
 - Definition of ElasticStack: https://www.elastic.co/what-is/elk-stack
 - purpose is to monitor network activity, custom applications and logins
 
-I hope that the four distinct applications that make up this solution will provide robust documentation and error handling, allowing this effort to be leverage for other purposes.  I have used many  monitoring solutions and found that they all had some fatal flaw that prevented them from being a total solution; typically they would fail silently on some critical feature.  
+I hope the four distinct applications that make up this solution will provide robust documentation and error handling, allowing this effort to be leverage for other purposes.  I have used many  monitoring solutions and found that they all had some fatal flaw that prevented them from being a total solution; typically they would fail silently on some critical feature.  
 
 This is a work in progress and another of my archives of generally useful information that I don't want to lose.  Feel free to use for your own purposes.  
 
@@ -14,8 +14,8 @@ See "Useful commands and scripts" for ...
 1. Elastic Search Service
 2. Elastic Search Admin  
 3. Kabana Service  
-ToDo: 4. Kabana Admin
-ToDo: 5. Kabana Usage
+ToDo: 4. Kabana Admin  
+ToDo: 5. Kabana Usage  
 
 # References
 https://www.xmodulo.com/install-elk-stack-ubuntu.html  
