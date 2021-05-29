@@ -14,8 +14,8 @@ See "Useful commands and scripts" for ...
 1. Elastic Search Service
 2. Elastic Search Admin  
 3. Kibana Service  
-ToDo: 4. Kibana Admin  
-ToDo: 5. Kibana Usage  
+4. ToDo: Kibana Admin  
+5. ToDo: Kibana Usage  
 
 # References
 https://www.xmodulo.com/install-elk-stack-ubuntu.html  
