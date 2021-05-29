@@ -18,18 +18,21 @@ See "Useful commands and scripts" for ...
 5. ToDo: Kibana Usage  
 
 # References
-https://www.xmodulo.com/install-elk-stack-ubuntu.html  
-https://www.elastic.co/what-is/elk-stack  
-Elastic Stack download info: https://www.elastic.co/start  
+- https://www.xmodulo.com/install-elk-stack-ubuntu.html  
+- https://www.elastic.co/what-is/elk-stack  
+- Elastic Stack download info: https://www.elastic.co/start  
 
 
-Network monitoring tools recommended in https://www.binarytides.com/linux-commands-monitor-network/
+- Network monitoring tools recommended in https://www.binarytides.com/linux-commands-monitor-network/
  that I have used:  
  --  https://linux.die.net/man/8/iftop  
  --  https://linux.die.net/man/8/nethogs is a small 'net top' tool. Instead of breaking the traffic down per protocol or per subnet, it groups bandwidth by process (https://github.com/raboof/nethogs).
 
 
-Apache Log Monitoring with estack  
+- https://www.binarytides.com/linux-top-command/
+
+
+- Apache Log Monitoring with estack  
 http://localhost:5601/app/home#/tutorial/apacheLogs  
   
 
@@ -177,7 +180,7 @@ $ sudo systemctl disable SERVICENAME
 ```Bash
 #Service ports
 # requires: $ sudo apt install net-tools
-# better to use "ss" because it belongs to OS
+# better to use "ss" because pre-installed in OS
 $ sudo netstat -ltup | grep java
 $ sudo netstat -ltup | grep kibana
 ```  
