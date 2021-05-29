@@ -13,9 +13,9 @@ See "Useful commands and scripts" for ...
 
 1. Elastic Search Service
 2. Elastic Search Admin  
-3. Kabana Service  
-ToDo: 4. Kabana Admin  
-ToDo: 5. Kabana Usage  
+3. Kibana Service  
+ToDo: 4. Kibana Admin  
+ToDo: 5. Kibana Usage  
 
 # References
 https://www.xmodulo.com/install-elk-stack-ubuntu.html  
@@ -26,7 +26,7 @@ Elastic Stack download info: https://www.elastic.co/start
 Network monitoring tools recommended in https://www.binarytides.com/linux-commands-monitor-network/
  that I have used:  
  --  https://linux.die.net/man/8/iftop  
- --  https://linux.die.net/man/8/nethogs is a small 'net top' tool. Instead of breaking the traffic down per protocol or per subnet, it groups bandwidth by process (https://github.com/raboof/nethogsq).
+ --  https://linux.die.net/man/8/nethogs is a small 'net top' tool. Instead of breaking the traffic down per protocol or per subnet, it groups bandwidth by process (https://github.com/raboof/nethogs).
 
 
 Apache Log Monitoring with estack  
@@ -45,10 +45,16 @@ http://localhost:5601/app/home#/tutorial/apacheLogs
 # General Notes
 - see the last section "Useful commands and scripts" for more note like info  
 
-- changed to a new VM without https://xfce.org/ because I needed a cleaner network environment for testing  
--- returned to 1 GB RAM because of the reduced load  
+- changed to a new VM without https://xfce.org/ (needed a cleaner network environment for testing):  
+  -- returned to 1 GB RAM because of the reduced load  
+  -- successfully installed Elastic and Kibana on new VM following instructions on this page   
+	-- Elastic/Java are using 47% RAM, no slowness observed  
+	-- reviewed settings docs for Elastic and Kibana, will tweak after test data flowing  
+	-- configured shell script to run "last" on login  
 
-- next step: install Elastic and Kabana on new VM  
+- next: 
+-- look at ss for quick traffic analysis
+-- import Apache log
 
 
 # 1. Elastic Search Service
@@ -98,7 +104,7 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/auditing-setting
 
 
 
-# 3. Kabana Service  
+# 3. Kibana Service  
 
 Install:  
 https://www.elastic.co/guide/en/kibana/7.12/deb.html#deb-repo  
@@ -122,8 +128,6 @@ Test Service up:
 2. Browse:   
 http://localhost:5601  
 http://localhost:5601/app/kibana_overview#/  
-
-
 
 
 # Useful commands and scripts
@@ -150,6 +154,11 @@ $ sudo last -10 -F -i
 # of the last 30 logins, exclude userName  
 $ sudo last -30 -F -i | grep -v userName  
 
+# content for ~/scripts/login.sh (to run from ~/.profile)
+#!/bin/bash
+echo
+echo Last 10 logins with reboots etc:
+last -10 -F -i -x
 ```
 
 ```Bash
@@ -159,16 +168,18 @@ $ sudo systemctl --type=service
 $ sudo systemctl --type=service --state=active
 # list startup services only (https://www.linux.com/topic/desktop/cleaning-your-linux-startup-process/)
 $ sudo systemctl list-unit-files --type=service | grep enabled
-```  
 
-```Bash
-#Disabled services
+#Disable service
+$ sudo systemctl stop SERVICENAME
+$ sudo systemctl disable SERVICENAME
 ```  
 
 ```Bash
 #Service ports
+# requires: $ sudo apt install net-tools
+# better to use "ss" because it belongs to OS
 $ sudo netstat -ltup | grep java
-$ sudo netstat -ltup | grep kabana
+$ sudo netstat -ltup | grep kibana
 ```  
 
 ```Bash
