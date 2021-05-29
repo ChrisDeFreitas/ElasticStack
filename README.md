@@ -55,8 +55,8 @@ http://localhost:5601/app/home#/tutorial/apacheLogs
 	-- reviewed settings docs for Elastic and Kibana, will tweak after test data flowing  
 	-- configured shell script to run "last" on login  
 
-- next: 
--- look at ss for quick traffic analysis
+- next:  
+-- look at ss for quick traffic analysis  
 -- import Apache log
 
 
