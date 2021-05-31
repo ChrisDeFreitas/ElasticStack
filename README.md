@@ -57,9 +57,9 @@ http://localhost:5601/app/home#/tutorial/apacheLogs
 	-- created scripts/login.sh to run "last" and "ss" on login  
 
 - next:  
--- look at ss for quick traffic analysis
--- record count of kibana ports=established
--- import Apache log
+-- look at ss for quick traffic analysis  
+-- record count of kibana ports=establishe  d
+-- import Apache log  
 
 
 # 1. Elastic Search Service
@@ -140,9 +140,7 @@ http://localhost:5601/app/kibana_overview#/
 ```Bash
 # free memory	
 $ free -h   
-```
 
-```Bash
 # display top 10 cpu consumers
 $ sudo ps -e --sort -pcpu -o "%cpu %mem pri f stat pid ppid class rtprio ni pri psr start user comm time tty" | head -n 10
 
@@ -152,7 +150,9 @@ $ sudo ps -e --sort -pmem -o "%cpu %mem pri f stat pid ppid class rtprio ni pri 
 # display 30 recently started apps
 # note: to get startup commandline add "command" to headers argument (after tty and before last ")
 $ sudo ps -e --sort -start -o "%cpu %mem pri f stat pid ppid class rtprio ni pri psr start user comm time tty" | tail -n 30  
+```
 
+```Bash
 # list last 10 logins  
 $ sudo last -10 -F -i
 
