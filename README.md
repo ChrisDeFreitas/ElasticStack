@@ -30,7 +30,8 @@ See "Useful commands and scripts" for ...
 
 
 - https://www.binarytides.com/linux-top-command/
-
+- https://www.binarytides.com/linux-ss-command/
+- https://blog.confirm.ch/tcp-connection-states/
 
 - Apache Log Monitoring with estack  
 http://localhost:5601/app/home#/tutorial/apacheLogs  
@@ -41,7 +42,7 @@ http://localhost:5601/app/home#/tutorial/apacheLogs
 - Debian 10   
 - VMWare Virtual Machine  
 - 1 GB Ram, 50 GB Disk  
-- bash, Apache, nodejs  
+- bash, apache2  
 
 
 
@@ -53,10 +54,11 @@ http://localhost:5601/app/home#/tutorial/apacheLogs
   -- successfully installed Elastic and Kibana on new VM following instructions on this page   
 	-- Elastic/Java are using 47% RAM, no slowness observed  
 	-- reviewed settings docs for Elastic and Kibana, will tweak after test data flowing  
-	-- configured shell script to run "last" on login  
+	-- created scripts/login.sh to run "last" and "ss" on login  
 
 - next:  
--- look at ss for quick traffic analysis  
+-- look at ss for quick traffic analysis
+-- record count of kibana ports=established
 -- import Apache log
 
 
@@ -188,6 +190,14 @@ $ sudo netstat -ltup | grep kibana
 ```Bash
 # bandwidth: top 10 consumers by ???
 $ sudo ???
+
+# port activity summary
+$ ss -s
+
+# all listening ports
+$ sudo ss --tcp --listening --processes -n
+
+
 ```
 
 
@@ -199,4 +209,5 @@ https://debian.org
 https://xfce.org   
 https://elastic.co
 https://xmodulo.com  
-https://www.linux.com  
+https://linux.com  
+https://binarytides.com   
