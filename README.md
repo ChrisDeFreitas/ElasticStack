@@ -141,6 +141,9 @@ http://localhost:5601/app/kibana_overview#/
 # free memory	
 $ free -h   
 
+# find process details by pid (with command line)
+$ sudo ps -ax |grep 19414
+
 # display top 10 cpu consumers
 $ sudo ps -e --sort -pcpu -o "%cpu %mem pri f stat pid ppid class rtprio ni pri psr start user comm time tty" | head -n 10
 
@@ -212,9 +215,6 @@ $ sudo ss -tup  |grep pid=5992  |wc -l
 
 # list processes by number of established tcp connections
 $ sudo ss -Hptu |awk '{print $7}' |sort |uniq -c -w25 |sort -r
-
-# find process details by pid
-$ sudo ps -ax |grep 19414
 ```
 
 ```Bash
