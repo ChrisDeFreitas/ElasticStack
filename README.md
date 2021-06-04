@@ -205,7 +205,7 @@ $ sudo ss -ltup
 #   sport = source/local port
 $ ss -t '( dport = :22 or sport = :22 )'
 
-# count established connections to source port
+# count established connections by source port
 # based on ElasticStack ports
 $ ss sport = :9200 or sport = :9300  |wc -l
 
