@@ -54,11 +54,12 @@ http://localhost:5601/app/home#/tutorial/apacheLogs
   -- successfully installed Elastic and Kibana on new VM following instructions on this page   
 	-- Elastic/Java are using 47% RAM, no slowness observed  
 	-- reviewed settings docs for Elastic and Kibana, will tweak after test data flowing  
-	-- created scripts/login.sh to run "last" and "ss" on login  
 	-- optimize in future: on boot, Kibana establishes 59 TCP connections to the local ElasticSearch service  
+	-- created scripts/login.sh to run "last" and "ss" on login  
+	-- created scripts/tcpUsage.sh to list processes and count of established connections
 
 - next:  
--- import Apache log  
+  -- import Apache log  
 
 
 # 1. Elastic Search Service
@@ -233,7 +234,13 @@ echo Last 10 logins with reboots etc:
 last -10 -F -i -x
 ```
 
+```Bash
+## tcpUsage.sh
 
+#!/bin/bash
+echo List processes and count of established connections - MUST be run as root:
+ss -Hptu |awk '{print $7}' |sort |uniq -c -w25 |sort -r
+```
   
 	
 # Thanks To:  

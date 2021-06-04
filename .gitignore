@@ -1,0 +1,4 @@
+#repository ignore files:
+.gitconfig
+.vscode/
+*.bak
