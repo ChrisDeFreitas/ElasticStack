@@ -55,10 +55,9 @@ http://localhost:5601/app/home#/tutorial/apacheLogs
 	-- Elastic/Java are using 47% RAM, no slowness observed  
 	-- reviewed settings docs for Elastic and Kibana, will tweak after test data flowing  
 	-- created scripts/login.sh to run "last" and "ss" on login  
+	-- optimize in future: on boot, Kibana establishes 59 TCP connections to the local ElasticSearch service  
 
 - next:  
--- look at ss for quick traffic analysis  
--- record count of kibana ports=establishe  d
 -- import Apache log  
 
 
@@ -158,12 +157,6 @@ $ sudo last -10 -F -i
 
 # of the last 30 logins, exclude userName  
 $ sudo last -30 -F -i | grep -v userName  
-
-# content for ~/scripts/login.sh (to run from ~/.profile)
-#!/bin/bash
-echo
-echo Last 10 logins with reboots etc:
-last -10 -F -i -x
 ```
 
 ```Bash
@@ -182,20 +175,45 @@ $ sudo systemctl disable SERVICENAME
 ```Bash
 #Service ports
 # requires: $ sudo apt install net-tools
-# better to use "ss" because pre-installed in OS
+# better to use "ss" because pre-installed in Debian
 $ sudo netstat -ltup | grep java
 $ sudo netstat -ltup | grep kibana
-```  
 
-```Bash
-# bandwidth: top 10 consumers by ???
-$ sudo ???
+# ss switches
+# -H = hide column headers  
+# -n  = do not resolve hostnames or port numbers (use 22 instead of ssh)
+# -o  = display timer data
+# state established = only display established connections
+# exclude established = exclude established connections
+# sport > :1024 =  dislay source ports above 1024
+# -l, state listening = report on listening ports
+# -p, --process = include pid, requires root access
+# -tu, --query=inet, --tcp --udp = display data for tcp and udp connections (all equal)
 
-# port activity summary
+# summary of port activity 
 $ ss -s
 
-# all listening ports
-$ sudo ss --tcp --listening --processes -n
+# all listening internet ports with pid
+$ sudo ss -ltup 
+
+# tcp connections by port number
+#   dport = destination/remote port
+#   sport = source/local port
+$ ss -t '( dport = :22 or sport = :22 )'
+
+# count established connections to source port
+# based on ElasticStack ports
+$ ss sport = :9200 or sport = :9300  |wc -l
+
+# count established connections by pid
+# based on current pid of Kibana = 5992
+$ sudo ss -tup  |grep pid=5992  |wc -l
+
+# list processes by number of established tcp connections
+$ sudo ss -Hptu |awk '{print $7}' |sort |uniq -c -w25 |sort -r
+
+# find process details by pid
+$ sudo ps -ax |grep 19414
 ```
 
 ```Bash

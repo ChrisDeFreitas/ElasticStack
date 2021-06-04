@@ -2,7 +2,7 @@
 
 echo 
 echo ss --summary:
-ss -sH
+ss -s
 
 echo ss --listening --query=inet:
 ss -ltuH
