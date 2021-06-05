@@ -6,22 +6,28 @@ I hope the four distinct applications that make up this solution will provide ro
 
 This is a work in progress and another of my archives of generally useful information that I don't want to lose.  Feel free to use for your own purposes.  
 
-### Sections  
-See "References" for useful links.  
-See "General Notes" to see where I am in the process.  
-See "Useful commands and scripts" for ...  
+## Sections  
+- Refereneces  
+- General Notes  
+- Elastic Search Service
+- Elastic Search Admin  
+- Kibana Service  
+- Filebeat Service  
+- Metricbeat Service (todo soon)
+- Apache Monitoring  
+- Commands and Scripts
 
-1. Elastic Search Service
-2. Elastic Search Admin  
-3. Kibana Service  
-4. ToDo: Kibana Admin  
-5. ToDo: Kibana Usage  
+- See:
+-- "References" for useful links.  
+-- "General Notes" to see where I am in the process.  
+-- "Commands and Scripts" for ...  
 
 # References
 - https://www.xmodulo.com/install-elk-stack-ubuntu.html  
 - https://www.elastic.co/what-is/elk-stack  
 - Elastic Stack download info: https://www.elastic.co/start  
-
+- Secrets keystore: https://www.elastic.co/guide/en/beats/filebeat/7.13/keystore.html  
+- YAML format in estack: https://www.elastic.co/guide/en/beats/libbeat/7.13/config-file-format.html
 
 - Network monitoring tools recommended in https://www.binarytides.com/linux-commands-monitor-network/
  that I have used:  
@@ -33,33 +39,36 @@ See "Useful commands and scripts" for ...
 - https://www.binarytides.com/linux-ss-command/
 - https://blog.confirm.ch/tcp-connection-states/
 
-- Apache Log Monitoring with estack  
-http://localhost:5601/app/home#/tutorial/apacheLogs  
-  
-
-
-# Test Host
-- Debian 10   
-- VMWare Virtual Machine  
-- 1 GB Ram, 50 GB Disk  
-- bash, apache2  
-
 
 
 # General Notes
-- see the last section "Useful commands and scripts" for more note like info  
+- see the last section "Commands and scripts" for more note like info  
 
+## Test Host
+- Debian 10   
+- VMWare Virtual Machine  
+- 1 GB Ram, 50 GB Disk  
+- bash, apache2, midnight commander  
+
+## Notes
 - changed to a new VM without https://xfce.org/ (needed a cleaner network environment for testing):  
   -- returned to 1 GB RAM because of the reduced load  
   -- successfully installed Elastic and Kibana on new VM following instructions on this page   
 	-- Elastic/Java are using 47% RAM, no slowness observed  
 	-- reviewed settings docs for Elastic and Kibana, will tweak after test data flowing  
-	-- optimize in future: on boot, Kibana establishes 59 TCP connections to the local ElasticSearch service  
 	-- created scripts/login.sh to run "last" and "ss" on login  
 	-- created scripts/tcpUsage.sh to list processes and count of established connections
+	-- Apache log and metrics monitoring with estack running  
 
-- next:  
-  -- import Apache log  
+## Next  
+  -- setup Windows monitoring  
+  -- setup Linux monitoring  
+
+## ToDo
+- optimize in future: on boot, Kibana establishes 59 TCP connections to the local ElasticSearch service  
+- Lookup: while installing Filebeat and Metricbeat got this message:  
+"Setting up ML using setup --machine-learning is going to be removed in 8.0.0. Please use the ML app instead."  
+- add section: Kibana Admin  
 
 
 # 1. Elastic Search Service
@@ -135,7 +144,103 @@ http://localhost:5601
 http://localhost:5601/app/kibana_overview#/  
 
 
-# Useful commands and scripts
+# 4. Filebeat Service
+https://www.elastic.co/guide/en/beats/filebeat/7.13/filebeat-installation-configuration.html  
+https://www.elastic.co/guide/en/beats/filebeat/7.13/command-line-options.html  
+https://www.elastic.co/guide/en/beats/filebeat/7.13/configuration-filebeat-options.html  
+
+```Bash
+$ sudo service filebeat start  
+
+# append "-h" for help info
+$ sudo filebeat test config
+$ sudo filebeat test output
+
+$ sudo filebeat modules list
+$ sudo filebeat modules enable apache  
+
+$ sudo filebeat keystore add ES_PWD
+$ sudo filebeat keystore list
+$ sudo filebeat keystore remove ES_PWD
+```
+
+# 5. Apache Monitoring
+
+## Apache Log Monitoring
+url: http://127.0.0.1:5601/app/home#/tutorial/apacheLogs  
+uses Filebeat: https://www.elastic.co/guide/en/beats/filebeat/7.13/filebeat-installation-configuration.html  
+
+- install:
+$ curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.13.0-amd64.deb  
+$ sudo dpkg -i filebeat-7.13.0-amd64.deb  
+
+- configure (currently using defaults found in file): 
+$ sudo nano /etc/filebeat/filebeat.yml
+-- output.elasticsearch:  
+  hosts: ["<es_url>"]  
+  username: "elastic"  
+  password: "<password>"  
+
+- (if needed) setup remote kibana settings:  
+-- setup.kibana:
+    host: "mykibanahost:5601" 
+    username: "my_kibana_user"  
+    password: "{pwd}"  
+
+- enable module:  
+$ sudo filebeat modules enable apache  
+
+- start service:  
+$ sudo filebeat setup -e
+$ sudo service filebeat start
+
+- test
+$ sudo filebeat test config
+$ sudo filebeat test output
+
+- Launch Kibana:
+-- http://localhost:5601  
+-- In the side navigation, click Discover.  
+-- -- make sure the predefined filebeat-* index pattern is selected.  
+-- -- change the time filter. By default, Kibana shows the last 15 minutes.  
+-- In the side navigation, click Dashboard and filter on "apache"
+-- -- verify the Filebeat dashboard is selected
+
+## Apache Metrics Monitoring
+url: http://127.0.0.1:5601/app/home#/tutorial/apacheMetrics  
+uses Metricbeat: https://www.elastic.co/guide/en/beats/metricbeat/7.13/metricbeat-installation-configuration.html  
+
+- install:
+$ curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.13.1-amd64.deb  
+$ sudo dpkg -i metricbeat-7.13.1-amd64.deb  
+
+- configure:
+$ /etc/metricbeat/metricbeat.yml  
+-- output.elasticsearch:
+  hosts: ["<es_url>"]
+  username: "elastic"
+  password: "<password>"
+
+- (if needed) setup remote kibana:
+-- setup.kibana:
+  host: "<kibana_url>"  
+
+- enable apache module
+$ sudo metricbeat modules enable apache  
+
+- start service:  
+$ sudo metricbeat setup -e  
+$ sudo service metricbeat start  
+
+ Launch Kibana:
+-- http://localhost:5601  
+-- In the side navigation, click Discover.  
+-- -- make sure the predefined metricbeat-* index pattern is selected.  
+-- -- change the time filter. By default, Kibana shows the last 15 minutes.  
+-- In the side navigation, click Dashboard and filter on "apache"
+-- -- verify the Metricbeat dashboard is selected
+
+# Commands and Scripts
 
 ```Bash
 # free memory	
@@ -235,19 +340,30 @@ last -10 -F -i -x
 ```
 
 ```Bash
+## recentApps.sh
+
+#!/bin/bash
+echo
+echo 30 recently started apps - MUST be run as root:
+echo
+echo start time user comm tty pid ppid %cpu %mem pri class pri psr 
+ps -e --sort=-start -o "start time user comm tty pid ppid %cpu %mem pri class pri psr " | tail -n 30  | sort -r
+```  
+	
+```Bash
 ## tcpUsage.sh
 
 #!/bin/bash
 echo List processes and count of established connections - MUST be run as root:
 ss -Hptu |awk '{print $7}' |sort |uniq -c -w25 |sort -r
 ```
-  
-	
+
 # Thanks To:  
 https://github.com    
 https://debian.org    
 https://xfce.org   
-https://elastic.co
+https://midnight-commander.org  
+https://elastic.com  
 https://xmodulo.com  
 https://linux.com  
 https://binarytides.com   
