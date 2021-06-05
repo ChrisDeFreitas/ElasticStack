@@ -17,7 +17,7 @@ This is a work in progress and another of my archives of generally useful inform
 - Apache Monitoring  
 - Commands and Scripts
 
-- See:
+- See:  
 -- "References" for useful links.  
 -- "General Notes" to see where I am in the process.  
 -- "Commands and Scripts" for ...  
@@ -42,7 +42,7 @@ This is a work in progress and another of my archives of generally useful inform
 
 
 # General Notes
-- see the last section "Commands and scripts" for more note like info  
+(see the last section "Commands and scripts" for more note like info)  
 
 ## Test Host
 - Debian 10   
@@ -57,15 +57,16 @@ This is a work in progress and another of my archives of generally useful inform
 	-- Elastic/Java are using 47% RAM, no slowness observed  
 	-- reviewed settings docs for Elastic and Kibana, will tweak after test data flowing  
 	-- created scripts/login.sh to run "last" and "ss" on login  
-	-- created scripts/tcpUsage.sh to list processes and count of established connections
-	-- Apache log and metrics monitoring with estack running  
+	-- created scripts/tcpUsage.sh to list processes and count of established connections  
+	-- Apache log and metrics monitoring with estack running 
 
 ## Next  
-  -- setup Windows monitoring  
-  -- setup Linux monitoring  
+  - setup Windows monitoring  
+  - setup Linux monitoring  
 
 ## ToDo
 - optimize in future: on boot, Kibana establishes 59 TCP connections to the local ElasticSearch service  
+-- after installing and testing Apache monitoring, Kibana has 73 connections to local Elastic app
 - Lookup: while installing Filebeat and Metricbeat got this message:  
 "Setting up ML using setup --machine-learning is going to be removed in 8.0.0. Please use the ML app instead."  
 - add section: Kibana Admin  
@@ -198,7 +199,7 @@ $ sudo service filebeat start
 $ sudo filebeat test config
 $ sudo filebeat test output
 
-- Launch Kibana:
+- launch Kibana:
 -- http://localhost:5601  
 -- In the side navigation, click Discover.  
 -- -- make sure the predefined filebeat-* index pattern is selected.  
@@ -232,7 +233,7 @@ $ sudo metricbeat modules enable apache
 $ sudo metricbeat setup -e  
 $ sudo service metricbeat start  
 
- Launch Kibana:
+ - launch Kibana:  
 -- http://localhost:5601  
 -- In the side navigation, click Discover.  
 -- -- make sure the predefined metricbeat-* index pattern is selected.  
