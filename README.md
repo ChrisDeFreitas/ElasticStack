@@ -8,7 +8,7 @@ This is a work in progress and another of my archives of generally useful inform
 
 ## Sections  
 - Refereneces  
-- General Notes  
+- General  
 - Elastic Search Service
 - Elastic Search Admin  
 - Kibana Service  
@@ -41,7 +41,7 @@ This is a work in progress and another of my archives of generally useful inform
 
 
 
-# General Notes
+# General
 (see the last section "Commands and scripts" for more note like info)  
 
 ## Test Host
@@ -215,8 +215,8 @@ uses Metricbeat: https://www.elastic.co/guide/en/beats/metricbeat/7.13/metricbea
 $ curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.13.1-amd64.deb  
 $ sudo dpkg -i metricbeat-7.13.1-amd64.deb   
 
-- configure:  
-$ /etc/metricbeat/metricbeat.yml  
+- configure (currently using defaults found in file):   
+$ sudo nano /etc/metricbeat/metricbeat.yml  
 -- output.elasticsearch:  
   hosts: ["<es_url>"]  
   username: "elastic"  
