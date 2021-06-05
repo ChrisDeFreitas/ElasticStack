@@ -171,62 +171,62 @@ $ sudo filebeat keystore remove ES_PWD
 url: http://127.0.0.1:5601/app/home#/tutorial/apacheLogs  
 uses Filebeat: https://www.elastic.co/guide/en/beats/filebeat/7.13/filebeat-installation-configuration.html  
 
-- install:
+- install:  
 $ curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.13.0-amd64.deb  
 $ sudo dpkg -i filebeat-7.13.0-amd64.deb  
 
-- configure (currently using defaults found in file): 
-$ sudo nano /etc/filebeat/filebeat.yml
+- configure (currently using defaults found in file):   
+$ sudo nano /etc/filebeat/filebeat.yml  
 -- output.elasticsearch:  
   hosts: ["<es_url>"]  
   username: "elastic"  
   password: "<password>"  
 
 - (if needed) setup remote kibana settings:  
--- setup.kibana:
-    host: "mykibanahost:5601" 
-    username: "my_kibana_user"  
+-- setup.kibana:  
+    host: "mykibanahost:5601"  
+    username: "my_kibana_user"   
     password: "{pwd}"  
 
 - enable module:  
 $ sudo filebeat modules enable apache  
 
 - start service:  
-$ sudo filebeat setup -e
-$ sudo service filebeat start
+$ sudo filebeat setup -e  
+$ sudo service filebeat start  
 
-- test
-$ sudo filebeat test config
-$ sudo filebeat test output
+- test  
+$ sudo filebeat test config  
+$ sudo filebeat test output  
 
-- launch Kibana:
+- launch Kibana:  
 -- http://localhost:5601  
 -- In the side navigation, click Discover.  
 -- -- make sure the predefined filebeat-* index pattern is selected.  
 -- -- change the time filter. By default, Kibana shows the last 15 minutes.  
--- In the side navigation, click Dashboard and filter on "apache"
--- -- verify the Filebeat dashboard is selected
+-- In the side navigation, click Dashboard and filter on "apache"  
+-- -- verify the Filebeat dashboard is selected  
 
 ## Apache Metrics Monitoring
 url: http://127.0.0.1:5601/app/home#/tutorial/apacheMetrics  
 uses Metricbeat: https://www.elastic.co/guide/en/beats/metricbeat/7.13/metricbeat-installation-configuration.html  
 
-- install:
+- install:  
 $ curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.13.1-amd64.deb  
-$ sudo dpkg -i metricbeat-7.13.1-amd64.deb  
+$ sudo dpkg -i metricbeat-7.13.1-amd64.deb   
 
-- configure:
+- configure:  
 $ /etc/metricbeat/metricbeat.yml  
--- output.elasticsearch:
-  hosts: ["<es_url>"]
-  username: "elastic"
-  password: "<password>"
+-- output.elasticsearch:  
+  hosts: ["<es_url>"]  
+  username: "elastic"  
+  password: "<password>"  
 
-- (if needed) setup remote kibana:
--- setup.kibana:
-  host: "<kibana_url>"  
+- (if needed) setup remote kibana:  
+-- setup.kibana:  
+  host: "<kibana_url>"   
 
-- enable apache module
+- enable apache module  
 $ sudo metricbeat modules enable apache  
 
 - start service:  
@@ -238,8 +238,8 @@ $ sudo service metricbeat start
 -- In the side navigation, click Discover.  
 -- -- make sure the predefined metricbeat-* index pattern is selected.  
 -- -- change the time filter. By default, Kibana shows the last 15 minutes.  
--- In the side navigation, click Dashboard and filter on "apache"
--- -- verify the Metricbeat dashboard is selected
+-- In the side navigation, click Dashboard and filter on "apache"  
+-- -- verify the Metricbeat dashboard is selected  
 
 # Commands and Scripts
 
@@ -355,6 +355,7 @@ ps -e --sort=-start -o "start time user comm tty pid ppid %cpu %mem pri class pr
 ## tcpUsage.sh
 
 #!/bin/bash
+echo
 echo List processes and count of established connections - MUST be run as root:
 ss -Hptu |awk '{print $7}' |sort |uniq -c -w25 |sort -r
 ```
