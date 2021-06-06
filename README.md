@@ -7,15 +7,15 @@ I hope the four distinct applications that make up this solution will provide ro
 This is a work in progress and another of my archives of generally useful information that I don't want to lose.  Feel free to use for your own purposes.  
 
 ## Sections  
-- Refereneces  
-- General  
-- Elastic Search Service
-- Elastic Search Admin  
-- Kibana Service  
-- Filebeat Service  
-- Metricbeat Service (todo soon)
-- Apache Monitoring  
-- Commands and Scripts
+-- Refereneces  
+-- General  
+-- Elastic Search Service
+-- Elastic Search Admin  
+-- Kibana Service  
+-- Filebeat Service  
+-- Metricbeat Service
+-- Apache Monitoring  
+-- Commands and Scripts
 
 - See:  
 -- "References" for useful links.  
@@ -57,12 +57,14 @@ This is a work in progress and another of my archives of generally useful inform
 	-- Elastic/Java are using 47% RAM, no slowness observed  
 	-- reviewed settings docs for Elastic and Kibana, will tweak after test data flowing  
 	-- created scripts/login.sh to run "last" and "ss" on login  
-	-- created scripts/tcpUsage.sh to list processes and count of established connections  
-	-- Apache log and metrics monitoring with estack running 
+	-- created scripts/tcpUsage.sh to list processes and count of established tcp connections  
+	-- created scripts/recentApps.sh to 30 processes recently started  
+	-- Apache log and metrics monitoring with estack is running well  
 
 ## Next  
+  - review Metricbeat system monitoring  
+  - configure remote Linux system with Metricbeat  
   - setup Windows monitoring  
-  - setup Linux monitoring  
 
 ## ToDo
 - optimize in future: on boot, Kibana establishes 59 TCP connections to the local ElasticSearch service  
@@ -70,9 +72,11 @@ This is a work in progress and another of my archives of generally useful inform
 - Lookup: while installing Filebeat and Metricbeat got this message:  
 "Setting up ML using setup --machine-learning is going to be removed in 8.0.0. Please use the ML app instead."  
 - add section: Kibana Admin  
+- review APM module: https://www.elastic.co/guide/en/kibana/7.13/xpack-apm.html  
+- review Winlogbeat module: https://www.elastic.co/guide/en/beats/winlogbeat/7.13/winlogbeat-installation-configuration.html  
+- review Elastic Security: https://www.elastic.co/guide/en/kibana/7.13/xpack-siem.html  
 
-
-# 1. Elastic Search Service
+# Elastic Search Service
 Source: https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html#deb-repo 
 
 This process allows elastic search to be run as a daemon:  
@@ -101,7 +105,7 @@ To list journal entries for the elasticsearch service starting from a given time
 $ sudo journalctl --unit elasticsearch --since  "2016-10-30 18:17:16"  
 
 
-# 2. Elastic Search Admin  
+# Elastic Search Admin  
 
 Configure service:   
 https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html#deb-configuring  
@@ -119,7 +123,7 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/auditing-setting
 
 
 
-# 3. Kibana Service  
+# Kibana Service  
 
 Install:  
 https://www.elastic.co/guide/en/kibana/7.12/deb.html#deb-repo  
@@ -145,37 +149,18 @@ http://localhost:5601
 http://localhost:5601/app/kibana_overview#/  
 
 
-# 4. Filebeat Service
+# Filebeat Service
 https://www.elastic.co/guide/en/beats/filebeat/7.13/filebeat-installation-configuration.html  
 https://www.elastic.co/guide/en/beats/filebeat/7.13/command-line-options.html  
 https://www.elastic.co/guide/en/beats/filebeat/7.13/configuration-filebeat-options.html  
 
-```Bash
-$ sudo service filebeat start  
-
-# append "-h" for help info
-$ sudo filebeat test config
-$ sudo filebeat test output
-
-$ sudo filebeat modules list
-$ sudo filebeat modules enable apache  
-
-$ sudo filebeat keystore add ES_PWD
-$ sudo filebeat keystore list
-$ sudo filebeat keystore remove ES_PWD
-```
-
-# 5. Apache Monitoring
-
-## Apache Log Monitoring
-url: http://127.0.0.1:5601/app/home#/tutorial/apacheLogs  
-uses Filebeat: https://www.elastic.co/guide/en/beats/filebeat/7.13/filebeat-installation-configuration.html  
 
 - install:  
 $ curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.13.0-amd64.deb  
 $ sudo dpkg -i filebeat-7.13.0-amd64.deb  
 
-- configure (currently using defaults found in file):   
+- configure localhost:  
+-- currently using defaults found in file  
 $ sudo nano /etc/filebeat/filebeat.yml  
 -- output.elasticsearch:  
   hosts: ["<es_url>"]  
@@ -187,6 +172,99 @@ $ sudo nano /etc/filebeat/filebeat.yml
     host: "mykibanahost:5601"  
     username: "my_kibana_user"   
     password: "{pwd}"  
+
+- enable module:  
+$ sudo filebeat modules list
+$ sudo filebeat modules enable apache  
+$ sudo filebeat modules disable apache  
+
+- start service:  
+$ sudo filebeat setup -e  
+$ sudo service filebeat start  
+
+- test  
+$ sudo filebeat test config  
+$ sudo filebeat test output  
+
+- launch Kibana:  
+-- http://localhost:5601  
+-- In the side navigation, click Discover.  
+-- -- make sure the predefined filebeat-* index pattern is selected.  
+-- -- change the time filter. By default, Kibana shows the last 15 minutes.  
+-- In the side navigation, click Dashboard, search on "filebeat" 
+-- -- verify the Filebeat dashboard is selected  
+
+
+```Bash
+$ sudo service filebeat start  
+
+# append "-h" for help info
+$ sudo filebeat test config
+$ sudo filebeat test output
+
+$ sudo filebeat modules list
+$ sudo filebeat modules enable apache  
+$ sudo filebeat modules disable apache  
+
+$ sudo filebeat keystore add ES_PWD
+$ sudo filebeat keystore list
+$ sudo filebeat keystore remove ES_PWD
+```
+
+# Metric Beat Service
+
+https://www.elastic.co/guide/en/beats/metricbeat/7.13/metricbeat-installation-configuration.html  
+https://www.elastic.co/guide/en/beats/metricbeat/7.13/setting-up-and-running.html
+
+- install:  
+$ curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.13.1-amd64.deb  
+$ sudo dpkg -i metricbeat-7.13.1-amd64.deb   
+
+- configure local host:  
+-- currently using defaults found in file)
+$ sudo nano /etc/metricbeat/metricbeat.yml  
+-- output.elasticsearch:  
+  hosts: ["<es_url>"]  
+  username: "elastic"  
+  password: "<password>"  
+
+- (if needed) setup remote kibana:  
+-- setup.kibana:  
+  host: "<kibana_url>"   
+	username: "my_kibana_user"  
+  password: "{pwd}"  
+
+- enable modules  
+-- https://www.elastic.co/guide/en/beats/metricbeat/7.13/command-line-options.html#modules-command
+-- system module enabled by default  
+$ sudo metricbeat modules list  
+$ sudo metricbeat modules enable apache mysql  
+$ sudo metricbeat modules disable apache  
+
+- test:  
+-- append "-h" for help info  
+$ sudo metricbeat test config  
+$ sudo metricbeat test modules system cpu  
+
+- start service:  
+$ sudo metricbeat setup -e  
+$ sudo service metricbeat start  
+
+- launch Kibana:  
+-- http://localhost:5601  
+-- In the side navigation, click Discover.  
+-- -- make sure the predefined metricbeat-* index pattern is selected.  
+-- In the side navigation, click Dashboard, search on "metric" 
+-- -- verify the Metricbeat dashboard is selected 
+
+# Apache Monitoring
+
+## Apache Log Monitoring
+url: http://127.0.0.1:5601/app/home#/tutorial/apacheLogs  
+uses Filebeat: https://www.elastic.co/guide/en/beats/filebeat/7.13/filebeat-installation-configuration.html  
+
+- install Filebeat service: 
+-- see above  
 
 - enable module:  
 $ sudo filebeat modules enable apache  
@@ -209,22 +287,9 @@ $ sudo filebeat test output
 
 ## Apache Metrics Monitoring
 url: http://127.0.0.1:5601/app/home#/tutorial/apacheMetrics  
-uses Metricbeat: https://www.elastic.co/guide/en/beats/metricbeat/7.13/metricbeat-installation-configuration.html  
 
-- install:  
-$ curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.13.1-amd64.deb  
-$ sudo dpkg -i metricbeat-7.13.1-amd64.deb   
-
-- configure (currently using defaults found in file):   
-$ sudo nano /etc/metricbeat/metricbeat.yml  
--- output.elasticsearch:  
-  hosts: ["<es_url>"]  
-  username: "elastic"  
-  password: "<password>"  
-
-- (if needed) setup remote kibana:  
--- setup.kibana:  
-  host: "<kibana_url>"   
+- install Metricbeat service: 
+-- see above  
 
 - enable apache module  
 $ sudo metricbeat modules enable apache  
