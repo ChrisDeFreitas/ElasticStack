@@ -9,11 +9,11 @@ This is a work in progress and another of my archives of generally useful inform
 ## Sections  
 -- Refereneces  
 -- General  
--- Elastic Search Service
+-- Elastic Search Service  
 -- Elastic Search Admin  
 -- Kibana Service  
 -- Filebeat Service  
--- Metricbeat Service
+-- Metricbeat Service  
 -- Apache Monitoring  
 -- Commands and Scripts
 
@@ -228,7 +228,7 @@ $ curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-
 $ sudo dpkg -i metricbeat-7.13.1-amd64.deb   
 
 - configure local host:  
--- currently using defaults found in file)
+-- currently using defaults found in file  
 $ sudo nano /etc/metricbeat/metricbeat.yml  
 -- output.elasticsearch:  
   hosts: ["<es_url>"]  
@@ -242,7 +242,7 @@ $ sudo nano /etc/metricbeat/metricbeat.yml
   password: "{pwd}"  
 
 - enable modules:  
--- https://www.elastic.co/guide/en/beats/metricbeat/7.13/command-line-options.html#modules-command
+-- https://www.elastic.co/guide/en/beats/metricbeat/7.13/command-line-options.html#modules-command  
 -- system module enabled by default  
 $ sudo metricbeat modules list  
 $ sudo metricbeat modules enable apache mysql  
@@ -262,7 +262,7 @@ $ sudo service metricbeat start
 -- http://localhost:5601  
 -- In the side navigation, click Discover.  
 -- -- make sure the predefined metricbeat-* index pattern is selected.  
--- In the side navigation, click Dashboard, search on "metric" 
+-- In the side navigation, click Dashboard, search on "metric"  
 -- -- verify the Metricbeat dashboard is selected 
 
 # Apache Monitoring
@@ -441,3 +441,4 @@ https://elastic.com
 https://xmodulo.com  
 https://linux.com  
 https://binarytides.com   
+https://linux.die.net  
