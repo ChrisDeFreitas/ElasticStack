@@ -192,7 +192,7 @@ $ sudo filebeat test output
 -- In the side navigation, click Discover.  
 -- -- make sure the predefined filebeat-* index pattern is selected.  
 -- -- change the time filter. By default, Kibana shows the last 15 minutes.  
--- In the side navigation, click Dashboard, search on "filebeat" 
+-- In the side navigation, click Dashboard, search on "filebeat"  
 -- -- verify the Filebeat dashboard is selected  
 
 - Commands:  
@@ -253,7 +253,7 @@ $ sudo metricbeat modules disable apache
 $ sudo metricbeat test config  
 $ sudo metricbeat test modules system cpu  
 
-- start service: 
+- start service:  
 -- "-e" redirects output to stderr   
 $ sudo metricbeat setup -e  
 $ sudo service metricbeat start  
@@ -269,9 +269,8 @@ $ sudo service metricbeat start
 
 ## Apache Log Monitoring
 url: http://127.0.0.1:5601/app/home#/tutorial/apacheLogs  
-uses Filebeat: https://www.elastic.co/guide/en/beats/filebeat/7.13/filebeat-installation-configuration.html  
 
-- install Filebeat service: 
+- install Filebeat service:   
 -- see above  
 
 - enable module:  
@@ -296,7 +295,7 @@ $ sudo filebeat test output
 ## Apache Metrics Monitoring
 url: http://127.0.0.1:5601/app/home#/tutorial/apacheMetrics  
 
-- install Metricbeat service: 
+- install Metricbeat service:  
 -- see above  
 
 - enable apache module  
