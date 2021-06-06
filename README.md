@@ -179,10 +179,11 @@ $ sudo filebeat modules enable apache
 $ sudo filebeat modules disable apache  
 
 - start service:  
+-- "-e" redirects output to stderr   
 $ sudo filebeat setup -e  
 $ sudo service filebeat start  
 
-- test  
+- test:  
 $ sudo filebeat test config  
 $ sudo filebeat test output  
 
@@ -194,8 +195,11 @@ $ sudo filebeat test output
 -- In the side navigation, click Dashboard, search on "filebeat" 
 -- -- verify the Filebeat dashboard is selected  
 
-
+- Commands:  
 ```Bash
+(global "-e" option redirects output to stderr for all filebeat commands)  
+
+$ sudo filebeat setup -e  
 $ sudo service filebeat start  
 
 # append "-h" for help info
@@ -214,7 +218,10 @@ $ sudo filebeat keystore remove ES_PWD
 # Metric Beat Service
 
 https://www.elastic.co/guide/en/beats/metricbeat/7.13/metricbeat-installation-configuration.html  
-https://www.elastic.co/guide/en/beats/metricbeat/7.13/setting-up-and-running.html
+https://www.elastic.co/guide/en/beats/metricbeat/7.13/setting-up-and-running.html  
+https://www.elastic.co/guide/en/beats/metricbeat/7.13/command-line-options.html  
+(global "-e" option redirects output to stderr for all Metricbeat commands)  
+
 
 - install:  
 $ curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.13.1-amd64.deb  
@@ -234,7 +241,7 @@ $ sudo nano /etc/metricbeat/metricbeat.yml
 	username: "my_kibana_user"  
   password: "{pwd}"  
 
-- enable modules  
+- enable modules:  
 -- https://www.elastic.co/guide/en/beats/metricbeat/7.13/command-line-options.html#modules-command
 -- system module enabled by default  
 $ sudo metricbeat modules list  
@@ -246,7 +253,8 @@ $ sudo metricbeat modules disable apache
 $ sudo metricbeat test config  
 $ sudo metricbeat test modules system cpu  
 
-- start service:  
+- start service: 
+-- "-e" redirects output to stderr   
 $ sudo metricbeat setup -e  
 $ sudo service metricbeat start  
 
@@ -269,7 +277,7 @@ uses Filebeat: https://www.elastic.co/guide/en/beats/filebeat/7.13/filebeat-inst
 - enable module:  
 $ sudo filebeat modules enable apache  
 
-- start service:  
+- ??? start service: ???  
 $ sudo filebeat setup -e  
 $ sudo service filebeat start  
 
@@ -294,7 +302,7 @@ url: http://127.0.0.1:5601/app/home#/tutorial/apacheMetrics
 - enable apache module  
 $ sudo metricbeat modules enable apache  
 
-- start service:  
+- ??? start service: ???  
 $ sudo metricbeat setup -e  
 $ sudo service metricbeat start  
 
