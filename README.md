@@ -8,7 +8,7 @@ This is a work in progress and another of my archives of generally useful inform
 
 ## Sections  
 -- Refereneces  
--- General  
+-- Overview  
 -- Elastic Search Service  
 -- Elastic Search Admin  
 -- Kibana Service  
@@ -19,15 +19,22 @@ This is a work in progress and another of my archives of generally useful inform
 
 - See:  
 -- "References" for useful links.  
--- "General Notes" to see where I am in the process.  
+-- "Overview" to see where I am in the process.  
 -- "Commands and Scripts" for ...  
 
 # References
 - https://www.xmodulo.com/install-elk-stack-ubuntu.html  
 - https://www.elastic.co/what-is/elk-stack  
 - Elastic Stack download info: https://www.elastic.co/start  
-- Secrets keystore: https://www.elastic.co/guide/en/beats/filebeat/7.13/keystore.html  
 - YAML format in estack: https://www.elastic.co/guide/en/beats/libbeat/7.13/config-file-format.html
+
+- https://www.elastic.co/guide/en/beats/metricbeat/7.13/filtering-and-enhancing-data.html. 
+
+
+- Secrets keystore  
+-- https://www.elastic.co/guide/en/beats/filebeat/7.13/keystore.html  
+-- https://www.elastic.co/guide/en/beats/metricbeat/7.13/keystore.html  
+
 
 - Network monitoring tools recommended in https://www.binarytides.com/linux-commands-monitor-network/
  that I have used:  
@@ -41,8 +48,8 @@ This is a work in progress and another of my archives of generally useful inform
 
 
 
-# General
-(see the last section "Commands and scripts" for more note like info)  
+# Overview
+(see the last section "Commands and Scripts" for more note like info)  
 
 ## Test Host
 - Debian 10   
@@ -58,23 +65,28 @@ This is a work in progress and another of my archives of generally useful inform
 	-- reviewed settings docs for Elastic and Kibana, will tweak after test data flowing  
 	-- created scripts/login.sh to run "last" and "ss" on login  
 	-- created scripts/tcpUsage.sh to list processes and count of established tcp connections  
-	-- created scripts/recentApps.sh to 30 processes recently started  
+	-- created scripts/recentApps.sh to list 30 processes recently started  
 	-- Apache log and metrics monitoring with estack is running well  
+	-- implement system.socket metricset: https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-metricset-system-socket.html  
+	-- implement system.service metricset: https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-metricset-system-service.html  
+	-- implement system.users metricset: https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-metricset-system-users.html  
 
 ## Next  
-  - review Metricbeat system monitoring  
-  - configure remote Linux system with Metricbeat  
+  - configure a kibana dashboard with relevant metricbeat.system data  
+	- configure remote Linux system with Metricbeat  
   - setup Windows monitoring  
+  - implement metricbeat.system.diskio metricset: https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-metricset-system-diskio.html  
 
 ## ToDo
-- optimize in future: on boot, Kibana establishes 59 TCP connections to the local ElasticSearch service  
--- after installing and testing Apache monitoring, Kibana has 73 connections to local Elastic app
+- optimize in future: on boot, Kibana establishes 120 TCP4/6 connections to the local ElasticSearch service  
+-- after installing and testing Apache monitoring, Kibana has 163 TCP4/6 connections to local Elastic app
 - Lookup: while installing Filebeat and Metricbeat got this message:  
 "Setting up ML using setup --machine-learning is going to be removed in 8.0.0. Please use the ML app instead."  
 - add section: Kibana Admin  
 - review APM module: https://www.elastic.co/guide/en/kibana/7.13/xpack-apm.html  
 - review Winlogbeat module: https://www.elastic.co/guide/en/beats/winlogbeat/7.13/winlogbeat-installation-configuration.html  
 - review Elastic Security: https://www.elastic.co/guide/en/kibana/7.13/xpack-siem.html  
+-- requires Basic subscription:  https://www.elastic.co/subscriptions, but how to subscribe?  
 
 # Elastic Search Service
 Source: https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html#deb-repo 
@@ -124,6 +136,8 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/auditing-setting
 
 
 # Kibana Service  
+https://www.elastic.co/guide/en/beats/metricbeat/current/index.html
+https://www.elastic.co/guide/en/kibana/7.12/settings.html  
 
 Install:  
 https://www.elastic.co/guide/en/kibana/7.12/deb.html#deb-repo  
@@ -138,10 +152,11 @@ $ sudo /bin/systemctl enable kibana.service
 Service start/stop:  
 $ sudo systemctl start kibana.service  
 $ sudo systemctl stop kibana.service  
-  
-Settings:  
-https://www.elastic.co/guide/en/kibana/7.12/settings.html  
-  
+
+Serivce logs:
+$ sudo systemctl status kibana
+$ sudo journalctl -u kibana
+
 Test Service up:  
 1. Forward port 5601 to local host  
 2. Browse:   
@@ -174,7 +189,7 @@ $ sudo nano /etc/filebeat/filebeat.yml
     password: "{pwd}"  
 
 - enable module:  
-$ sudo filebeat modules list
+$ sudo filebeat modules list  
 $ sudo filebeat modules enable apache  
 $ sudo filebeat modules disable apache  
 
@@ -216,10 +231,11 @@ $ sudo filebeat keystore remove ES_PWD
 ```
 
 # Metric Beat Service
-
+https://www.elastic.co/beats/metricbeat  
 https://www.elastic.co/guide/en/beats/metricbeat/7.13/metricbeat-installation-configuration.html  
 https://www.elastic.co/guide/en/beats/metricbeat/7.13/setting-up-and-running.html  
 https://www.elastic.co/guide/en/beats/metricbeat/7.13/command-line-options.html  
+https://www.elastic.co/guide/en/beats/metricbeat/7.13/keystore.html  
 (global "-e" option redirects output to stderr for all Metricbeat commands)  
 
 
@@ -250,20 +266,44 @@ $ sudo metricbeat modules disable apache
 
 - test:  
 -- append "-h" for help info  
-$ sudo metricbeat test config  
-$ sudo metricbeat test modules system cpu  
+$ sudo metricbeat -e test config  
+$ sudo metricbeat -e test modules system apache  
+$ sudo metricbeat -e test output  
+
+- auto-start:  
+$ sudo systemctl daemon-reload  
+$ sudo systemctl enable metricbeat  
 
 - start service:  
 -- "-e" redirects output to stderr   
 $ sudo metricbeat setup -e  
-$ sudo service metricbeat start  
+$ sudo service metricbeat start 
+
+- edit service settings  
+https://www.elastic.co/guide/en/beats/metricbeat/7.13/running-with-systemd.html  
+-- running as root is default for systemd services  
+$ sudo nano /etc/metricbeat/metricbeat.yml  
+$ sudo nano /etc/systemd/system/metricbeat.service.d  
+-- apply changes:  
+$ sudo systemctl daemon-reload  
+$ sudo systemctl restart metricbeat  
+
+- log file:
+$ sudo tail /var/log/metricbeat
+
 
 - launch Kibana:  
 -- http://localhost:5601  
 -- In the side navigation, click Discover.  
 -- -- make sure the predefined metricbeat-* index pattern is selected.  
--- In the side navigation, click Dashboard, search on "metric"  
--- -- verify the Metricbeat dashboard is selected 
+-- In the side navigation, click Dashboard, search for "[Metricbeat System]"  
+-- -- Dash boards for System, Host and Containers can be accessed within the dashboard
+
+## System Module  
+https://www.elastic.co/guide/en/beats/metricbeat/7.x/metricbeat-module-system.html  
+$ sudo nano /etc/metricbeat/modules.d/system.yml  
+
+
 
 # Apache Monitoring
 
@@ -432,7 +472,7 @@ echo List processes and count of established connections - MUST be run as root:
 ss -Hptu |awk '{print $7}' |sort |uniq -c -w25 |sort -r
 ```
 
-# Thanks To:  
+# Thanks To  
 https://github.com    
 https://debian.org    
 https://xfce.org   
