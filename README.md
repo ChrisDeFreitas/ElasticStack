@@ -71,11 +71,15 @@ This is a work in progress and another of my archives of generally useful inform
 	-- implement system.service metricset: https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-metricset-system-service.html  
 	-- implement system.users metricset: https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-metricset-system-users.html  
 
+- I've given up trying to create visualizations in Kibana because it requires a lot more time (and probably $$$) than I am willing to spend on this project.  I did experience some disturbing data inconsistencies while generating custom Lens, but, if I were using these tools in a professional setting I would follow up with calls to support and/or professional training.   
+  
+  For now I'm focused on using existing dashboards and visualizations, with the idea that discrepancies will be looked up with manual tools at the OS level (rather than digging through the Kibana data).  
+
 ## Next  
-  - configure a kibana dashboard with relevant metricbeat.system data  
-	- configure remote Linux system with Metricbeat  
-  - setup Windows monitoring  
-  - implement metricbeat.system.diskio metricset: https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-metricset-system-diskio.html  
+- find and verify kibana dashboards and visualizations with relevant metricbeat.system data   
+- configure remote Linux system with Metricbeat  
+- setup Windows monitoring  
+- implement metricbeat.system.diskio metricset: https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-metricset-system-diskio.html  
 
 ## ToDo
 - optimize in future: on boot, Kibana establishes 120 TCP4/6 connections to the local ElasticSearch service  
@@ -163,6 +167,15 @@ Test Service up:
 http://localhost:5601  
 http://localhost:5601/app/kibana_overview#/  
 
+
+# Kibana Usage  
+https://www.elastic.co/guide/en/kibana/7.13/index.html  
+
+I've given up trying to create visualizations in Kibana because it requires a lot more time (and probably $$$) than I am willing to spend on this project.
+
+Currently testing the existing dashboards and visualizations, with the idea that descripancies will be looked up with manual tools at the OS level (rather than digging through the Kibana data).  
+  
+Dahsboards used will be listed here.  
 
 # Filebeat Service
 https://www.elastic.co/guide/en/beats/filebeat/7.13/filebeat-installation-configuration.html  
