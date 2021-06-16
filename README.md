@@ -70,14 +70,15 @@ This is a work in progress and another of my archives of generally useful inform
 	-- implement system.socket metricset: https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-metricset-system-socket.html  
 	-- implement system.service metricset: https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-metricset-system-service.html  
 	-- implement system.users metricset: https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-metricset-system-users.html  
+  --- implement filebeat.system module: https://www.elastic.co/guide/en/beats/filebeat/7.13/filebeat-module-system.html  
 
 - I've given up trying to create visualizations in Kibana because it requires a lot more time (and probably $$$) than I am willing to spend on this project.  I did experience some disturbing data inconsistencies while generating custom Lens, but, if I were using these tools in a professional setting I would follow up with calls to support and/or professional training.   
   
   For now I'm focused on using existing dashboards and visualizations, with the idea that discrepancies will be looked up with manual tools at the OS level (rather than digging through the Kibana data).  
 
 ## Next  
-- find and verify kibana dashboards and visualizations with relevant metricbeat.system data   
-- configure remote Linux system with Metricbeat  
+- verify Metricbeat.System dashboards are accurate   
+- configure remote Linux system with Metricbeat.system and Filebeat.system  
 - setup Windows monitoring  
 - implement metricbeat.system.diskio metricset: https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-metricset-system-diskio.html  
 
@@ -171,18 +172,24 @@ http://localhost:5601/app/kibana_overview#/
 # Kibana Usage  
 https://www.elastic.co/guide/en/kibana/7.13/index.html  
 
-I've given up trying to create visualizations in Kibana because it requires a lot more time (and probably $$$) than I am willing to spend on this project.
+- Dashboards requiring Metricbeat.system  
+  [Metricbeat System] System Overview ECS  
+  [Metricbeat System] Host Overview ECS  
+  [Metricbeat System] Container Overview ECS  
 
-Currently testing the existing dashboards and visualizations, with the idea that descripancies will be looked up with manual tools at the OS level (rather than digging through the Kibana data).  
-  
-Dahsboards used will be listed here.  
+- Dashboards requiring Filebeat.system  
+  [Filebeat System] Syslog dashboard ECS  
+  [Filebeat System] Sudo commands ECS
+  [Filebeat System] SSH login attempts ECS  
+  [Filebeat System] New users and groups ECS  
+
 
 # Filebeat Service
 https://www.elastic.co/guide/en/beats/filebeat/7.13/filebeat-installation-configuration.html  
 https://www.elastic.co/guide/en/beats/filebeat/7.13/command-line-options.html  
 https://www.elastic.co/guide/en/beats/filebeat/7.13/configuration-filebeat-options.html  
-
-
+https://www.elastic.co/guide/en/beats/filebeat/7.13/configuration-filebeat-modules.html  
+  
 - install:  
 $ curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.13.0-amd64.deb  
 $ sudo dpkg -i filebeat-7.13.0-amd64.deb  
@@ -214,6 +221,7 @@ $ sudo service filebeat start
 - test:  
 $ sudo filebeat test config  
 $ sudo filebeat test output  
+
 
 - launch Kibana:  
 -- http://localhost:5601  
