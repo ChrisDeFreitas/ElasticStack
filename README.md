@@ -14,7 +14,6 @@ This is a work in progress and another of my archives of generally useful inform
 -- Kibana Usage    
 -- Filebeat Service  
 -- Metricbeat Service  
--- Apache Monitoring  
 -- Commands and Scripts
 
 - See:  
@@ -106,15 +105,15 @@ $ echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | sudo te
 $ sudo apt-get update && sudo apt-get install elasticsearch  
 
 
-- Configure service to start automatically:
-$ sudo /bin/systemctl daemon-reload  
-$ sudo /bin/systemctl enable elasticsearch.service  
+- Configure service to start automatically:  
+$ sudo systemctl daemon-reload  
+$ sudo systemctl enable elasticsearch.service  
   
 - Start/stop:  
 $ sudo systemctl start elasticsearch.service  
 $ sudo systemctl stop elasticsearch.service  
   
-- Logs
+- Logs  
 	To tail the journal:  
 	$ sudo journalctl -f  
 		
@@ -133,7 +132,7 @@ Source: https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html
 
 - Configure remote access:  
     
-	### 1. stop dependant services  
+	### 1. stop services  
 	$ sudo systemctl stop filebeat  
 	$ sudo systemctl stop metricbeat   
 	$ sudo systemctl stop kibana  
@@ -147,7 +146,7 @@ Source: https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html
 	```  
 		
 	### 3. configure kibana for remote access   
-	$ sudo nano /etc/elasticsearch/elasticsearch.yml  
+	$ sudo nano /etc/kibana/kibana.yml  
 	```Bash
 	server.host: 192.168.0.255  
 	```  
