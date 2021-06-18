@@ -10,8 +10,8 @@ This is a work in progress and another of my archives of generally useful inform
 -- Refereneces  
 -- Overview  
 -- Elastic Search Service  
--- Elastic Search Admin  
 -- Kibana Service  
+-- Kibana Usage    
 -- Filebeat Service  
 -- Metricbeat Service  
 -- Apache Monitoring  
@@ -51,7 +51,7 @@ This is a work in progress and another of my archives of generally useful inform
 # Overview
 (see the last section "Commands and Scripts" for more note like info)  
 
-## Test Host
+## Test estack Host
 - Debian 10   
 - VMWare Virtual Machine  
 - 1 GB Ram, 50 GB Disk  
@@ -76,9 +76,12 @@ This is a work in progress and another of my archives of generally useful inform
   
   For now I'm focused on using existing dashboards and visualizations, with the idea that discrepancies will be looked up with manual tools at the OS level (rather than digging through the Kibana data).  
 
+- configured remote Linux system with Metricbeat.system and Filebeat.system  
+-- 1. requires estack host configuration steps in "Elastic Search Service/Configure Remote Access"  
+-- 2. requires installation steps on remote host for Metricbeat and Filebeat  
+
 ## Next  
 - verify Metricbeat.System dashboards are accurate   
-- configure remote Linux system with Metricbeat.system and Filebeat.system  
 - setup Windows monitoring  
 - implement metricbeat.system.diskio metricset: https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-metricset-system-diskio.html  
 
@@ -87,84 +90,99 @@ This is a work in progress and another of my archives of generally useful inform
 -- after installing and testing Apache monitoring, Kibana has 163 TCP4/6 connections to local Elastic app
 - Lookup: while installing Filebeat and Metricbeat got this message:  
 "Setting up ML using setup --machine-learning is going to be removed in 8.0.0. Please use the ML app instead."  
-- add section: Kibana Admin  
 - review APM module: https://www.elastic.co/guide/en/kibana/7.13/xpack-apm.html  
 - review Winlogbeat module: https://www.elastic.co/guide/en/beats/winlogbeat/7.13/winlogbeat-installation-configuration.html  
 - review Elastic Security: https://www.elastic.co/guide/en/kibana/7.13/xpack-siem.html  
 -- requires Basic subscription:  https://www.elastic.co/subscriptions, but how to subscribe?  
 
 # Elastic Search Service
-Source: https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html#deb-repo 
+https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html#deb-repo  
+https://www.elastic.co/guide/en/elasticsearch/reference/current/settings.html  
 
-This process allows elastic search to be run as a daemon:  
+- Install as a service:  
 $ wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -  
 $ sudo apt-get install apt-transport-https  
 $ echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-7.x.list  
 $ sudo apt-get update && sudo apt-get install elasticsearch  
 
 
-Configure service to start automatically:
-- To enable journalctl logging, the --quiet option must be removed from the ExecStart command line in the elasticsearch.service file.   
+- Configure service to start automatically:
 $ sudo /bin/systemctl daemon-reload  
 $ sudo /bin/systemctl enable elasticsearch.service  
-
-Start/stop:  
+  
+- Start/stop:  
 $ sudo systemctl start elasticsearch.service  
 $ sudo systemctl stop elasticsearch.service  
+  
+- Logs
+	To tail the journal:  
+	$ sudo journalctl -f  
+		
+	To list journal entries for the elasticsearch service:  
+	$ sudo journalctl --unit elasticsearch  
 
-To tail the journal:  
-$ sudo journalctl -f  
+	To list journal entries for the elasticsearch service starting from a given time:  
+	$ sudo journalctl --unit elasticsearch --since  "2016-10-30 18:17:16"  
+		
+	View error log:  
+	$ sudo tailo /var/log/elasticsearch/elasticsearch.log  
 
-To list journal entries for the elasticsearch service:  
-$ sudo journalctl --unit elasticsearch  
-
-To list journal entries for the elasticsearch service starting from a given time:  
-$ sudo journalctl --unit elasticsearch --since  "2016-10-30 18:17:16"  
-
-
-# Elastic Search Admin  
-
-Configure service:   
-https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html#deb-configuring  
-https://www.elastic.co/guide/en/elasticsearch/reference/current/settings.html  
-
-Test service up:  
+- Test service up:  
 $ curl -X GET "localhost:9200/?pretty"  
 Source: https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html#deb-check-running  
 
-Directory layout:  
-https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html#deb-layout  
+- Configure remote access:  
+    
+	### 1. stop dependant services  
+	$ sudo systemctl stop filebeat  
+	$ sudo systemctl stop metricbeat   
+	$ sudo systemctl stop kibana  
+	$ sudo systemctl stop elasticsearch  
+		
+	### 2. configure elasticsearch   
+	$ sudo nano /etc/elasticsearch/elasticsearch.yml  
+	```Bash
+	network.host: _site_  
+	discovery.seed_hosts: localhost  
+	```  
+		
+	### 3. configure kibana for remote access   
+	$ sudo nano /etc/elasticsearch/elasticsearch.yml  
+	```Bash
+	server.host: 192.168.0.255  
+	```  
 
-Security settings:  
-https://www.elastic.co/guide/en/elasticsearch/reference/current/auditing-settings.html  
-
-
-
+	### 4. start services  
+	$ sudo systemctl start elasticsearch   
+	$ sudo systemctl start kibana  
+	$ sudo systemctl start filebeat  
+	$ sudo systemctl start metricbeat  
+  
 # Kibana Service  
-https://www.elastic.co/guide/en/beats/metricbeat/current/index.html
+https://www.elastic.co/guide/en/kibana/7.12/index.html  
 https://www.elastic.co/guide/en/kibana/7.12/settings.html  
 
-Install:  
+- Install:  
 https://www.elastic.co/guide/en/kibana/7.12/deb.html#deb-repo  
 $ sudo apt-get install apt-transport-https  
 $ echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-7.x.list  
 $ sudo apt-get update && sudo apt-get install kibana  
   
-Auto-start:  
+- Auto-start:  
 $ sudo /bin/systemctl daemon-reload  
 $ sudo /bin/systemctl enable kibana.service  
   
-Service start/stop:  
+- Service start/stop:  
 $ sudo systemctl start kibana.service  
 $ sudo systemctl stop kibana.service  
 
-Serivce logs:
+- Serivce logs:
 $ sudo systemctl status kibana
 $ sudo journalctl -u kibana
 
-Test Service up:  
-1. Forward port 5601 to local host  
-2. Browse:   
+- Test Service up:  
+  1. Forward port 5601 to local host  
+  2. Browse:   
 http://localhost:5601  
 http://localhost:5601/app/kibana_overview#/  
 
@@ -179,7 +197,8 @@ https://www.elastic.co/guide/en/kibana/7.13/index.html
 
 - Dashboards requiring Filebeat.system  
   [Filebeat System] Syslog dashboard ECS  
-  [Filebeat System] Sudo commands ECS
+  [Filebeat System] Sudo commands ECS  
+
   [Filebeat System] SSH login attempts ECS  
   [Filebeat System] New users and groups ECS  
 
@@ -194,19 +213,18 @@ https://www.elastic.co/guide/en/beats/filebeat/7.13/configuration-filebeat-modul
 $ curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.13.0-amd64.deb  
 $ sudo dpkg -i filebeat-7.13.0-amd64.deb  
 
-- configure localhost:  
--- currently using defaults found in file  
+- (if needed) confiugre remote estack host:  
 $ sudo nano /etc/filebeat/filebeat.yml  
--- output.elasticsearch:  
-  hosts: ["<es_url>"]  
-  username: "elastic"  
-  password: "<password>"  
-
-- (if needed) setup remote kibana settings:  
--- setup.kibana:  
-    host: "mykibanahost:5601"  
+```Bash
+setup.kibana:  
+    host: "192.168.0.255:5601"  
     username: "my_kibana_user"   
-    password: "{pwd}"  
+    password: "password"  
+output.elasticsearch:  
+  hosts: ["192.168.0.255:9200"]  
+  username: "my_elastic_user"  
+  password: "password"  
+```
 
 - enable module:  
 $ sudo filebeat modules list  
@@ -221,7 +239,6 @@ $ sudo service filebeat start
 - test:  
 $ sudo filebeat test config  
 $ sudo filebeat test output  
-
 
 - launch Kibana:  
 -- http://localhost:5601  
@@ -251,6 +268,14 @@ $ sudo filebeat keystore list
 $ sudo filebeat keystore remove ES_PWD
 ```
 
+## System Module  
+https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-module-system.html  
+
+## Apache Log Monitoring
+http://127.0.0.1:5601/app/home#/tutorial/apacheLogs  
+https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-module-apache.html  
+
+
 # Metric Beat Service
 https://www.elastic.co/beats/metricbeat  
 https://www.elastic.co/guide/en/beats/metricbeat/7.13/metricbeat-installation-configuration.html  
@@ -264,20 +289,19 @@ https://www.elastic.co/guide/en/beats/metricbeat/7.13/keystore.html
 $ curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.13.1-amd64.deb  
 $ sudo dpkg -i metricbeat-7.13.1-amd64.deb   
 
-- configure local host:  
--- currently using defaults found in file  
+- (if needed) setup remote estack host:  
 $ sudo nano /etc/metricbeat/metricbeat.yml  
--- output.elasticsearch:  
-  hosts: ["<es_url>"]  
-  username: "elastic"  
-  password: "<password>"  
-
-- (if needed) setup remote kibana:  
--- setup.kibana:  
-  host: "<kibana_url>"   
-	username: "my_kibana_user"  
-  password: "{pwd}"  
-
+```Bash
+setup.kibana:  
+  host: "192.168.0.255:5601"   
+  username: "my_kibana_user"  
+  password: "password"  
+output.elasticsearch:  
+  hosts: ["192.168.0.255:9200"]  
+  username: "my_elastic_user"  
+  password: "password"  
+```
+  
 - enable modules:  
 -- https://www.elastic.co/guide/en/beats/metricbeat/7.13/command-line-options.html#modules-command  
 -- system module enabled by default  
@@ -324,55 +348,10 @@ $ sudo tail /var/log/metricbeat
 https://www.elastic.co/guide/en/beats/metricbeat/7.x/metricbeat-module-system.html  
 $ sudo nano /etc/metricbeat/modules.d/system.yml  
 
+## Apache Metrics Module  
+http://127.0.0.1:5601/app/home#/tutorial/apacheMetrics  
+https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-module-apache.html  
 
-
-# Apache Monitoring
-
-## Apache Log Monitoring
-url: http://127.0.0.1:5601/app/home#/tutorial/apacheLogs  
-
-- install Filebeat service:   
--- see above  
-
-- enable module:  
-$ sudo filebeat modules enable apache  
-
-- ??? start service: ???  
-$ sudo filebeat setup -e  
-$ sudo service filebeat start  
-
-- test  
-$ sudo filebeat test config  
-$ sudo filebeat test output  
-
-- launch Kibana:  
--- http://localhost:5601  
--- In the side navigation, click Discover.  
--- -- make sure the predefined filebeat-* index pattern is selected.  
--- -- change the time filter. By default, Kibana shows the last 15 minutes.  
--- In the side navigation, click Dashboard and filter on "apache"  
--- -- verify the Filebeat dashboard is selected  
-
-## Apache Metrics Monitoring
-url: http://127.0.0.1:5601/app/home#/tutorial/apacheMetrics  
-
-- install Metricbeat service:  
--- see above  
-
-- enable apache module  
-$ sudo metricbeat modules enable apache  
-
-- ??? start service: ???  
-$ sudo metricbeat setup -e  
-$ sudo service metricbeat start  
-
- - launch Kibana:  
--- http://localhost:5601  
--- In the side navigation, click Discover.  
--- -- make sure the predefined metricbeat-* index pattern is selected.  
--- -- change the time filter. By default, Kibana shows the last 15 minutes.  
--- In the side navigation, click Dashboard and filter on "apache"  
--- -- verify the Metricbeat dashboard is selected  
 
 # Commands and Scripts
 
@@ -478,10 +457,10 @@ last -10 -F -i -x
 
 #!/bin/bash
 echo
-echo 30 recently started apps - MUST be run as root:
+echo 30 recently started apps:
 echo
 echo start time user comm tty pid ppid %cpu %mem pri class pri psr 
-ps -e --sort=-start -o "start time user comm tty pid ppid %cpu %mem pri class pri psr " | tail -n 30  | sort -r
+sudo ps -e --sort=-start -o "start time user comm tty pid ppid %cpu %mem pri class pri psr " | tail -n 30  | sort -r
 ```  
 	
 ```Bash
@@ -489,8 +468,8 @@ ps -e --sort=-start -o "start time user comm tty pid ppid %cpu %mem pri class pr
 
 #!/bin/bash
 echo
-echo List processes and count of established connections - MUST be run as root:
-ss -Hptu |awk '{print $7}' |sort |uniq -c -w25 |sort -r
+echo List processes and count of established connections:
+sudo ss -Hptu |awk '{print $7}' |sort |uniq -c -w25 |sort -r
 ```
 
 # Thanks To  
