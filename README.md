@@ -10,13 +10,13 @@ This is a work in progress and another of my archives of generally useful inform
 At this point the installation and operation of the components documented here are flawless.  These notes cover those aspects of Elastic Stack.  
 
 I'm having problems using Kibana and understanding what its' data is saying.  This is the only fault I found so far, but it applies to all the shipped Dashboards.  If I can't understand what the dashboards are supposed to be telling me, I don't know if I can trust the data without extensive testing!  In a professional setting where you're paid to use the tool that's fine--you do the analysis as quick as you can because the effort will be paid back over time.  But in this situation its a lot of time and effort that can be applied to another tool (like Zabbix).  
-
-	To be precise about the nature of the problem, the "[Metricbeat System] Host overview ECS" Dashboard provides socket data for the estack host for the last 3 days:
+  
+	To be precise about the nature of the problem, the "[Metricbeat System] Host overview ECS" Dashboard provides socket data for the estack host for the last 3 days:  
 				Inbound Traffic 12.4KB/s  
 				Total Transferred 1.9GB  
     
 	Where are the numbers coming from?  How are they calculated?  Is it safe to assume it is the median average for three days?  
-
+  
 	When you edit the Visualization the "Aggregation-based visualization/Metric" editor is presented. But it is not documented online and is not "intuitive". And it clearly needs some explanation because (looking at the editor) these two numbers are calculated in an extremely complex manner.  
 
   The online documentation is fine until you ask yourself: what does this really mean, and do these visualizations meet my monitoring needs?  At this point I can't trust the visualizations, and there is a lot that is irrelevant to my needs.  And my efforts to create custom visualizations have failed spectacurly with truly unsettling results.
