@@ -16,9 +16,9 @@ I'm having problems using Kibana and understanding what its' data is saying.  Th
   Inbound Traffic 12.4KB/s  
   Total Transferred 1.9GB  
     
-	Where are the numbers coming from?  How are they calculated?  Is it safe to assume it is the median average for three days?  
+  Where are the numbers coming from?  How are they calculated?  Is it safe to assume it is the median average for three days?  
   
-	When you edit the Visualization the "Aggregation-based visualization/Metric" editor is presented. But it is not documented online and is not "intuitive". And it clearly needs some explanation because (looking at the editor) these two numbers are calculated in an extremely complex manner.  
+  When you edit the Visualization the "Aggregation-based visualization/Metric" editor is presented. But it is not documented online and is not "intuitive". And it clearly needs some explanation because (looking at the editor) these two numbers are calculated in an extremely complex manner.  
 
   The online documentation is fine until you ask yourself: what does this really mean, and do these visualizations meet my monitoring needs?  At this point I can't trust the visualizations, and there is a lot that is irrelevant to my needs.  And my efforts to create custom visualizations have failed spectacurly with truly unsettling results.
 
