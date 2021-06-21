@@ -6,6 +6,23 @@ I hope the four distinct applications that make up this solution will provide ro
 
 This is a work in progress and another of my archives of generally useful information that I don't want to lose.  Feel free to use for your own purposes.  
 
+## Denoument
+At this point the installation and operation of the components documented here are flawless.  These notes cover those aspects of Elastic Stack.  
+
+I'm having problems using Kibana and understanding what its' data is saying.  This is the only fault I found so far, but it applies to all the shipped Dashboards.  If I can't understand what the dashboards are supposed to be telling me, I don't know if I can trust the data without extensive testing!  In a professional setting where you're paid to use the tool that's fine--you do the analysis as quick as you can because the effort will be paid back over time.  But in this situation its a lot of time and effort that can be applied to another tool (like Zabbix).  
+
+	To be precise about the nature of the problem, the "[Metricbeat System] Host overview ECS" Dashboard provides socket data for the estack host for the last 3 days:
+				Inbound Traffic 12.4KB/s  
+				Total Transferred 1.9GB  
+    
+	Where are the numbers coming from?  How are they calculated?  Is it safe to assume it is the median average for three days?  
+
+	When you edit the Visualization the "Aggregation-based visualization/Metric" editor is presented. But it is not documented online and is not "intuitive". And it clearly needs some explanation because (looking at the editor) these two numbers are calculated in an extremely complex manner.  
+
+  The online documentation is fine until you ask yourself: what does this really mean, and do these visualizations meet my monitoring needs?  At this point I can't trust the visualizations, and there is a lot that is irrelevant to my needs.  And my efforts to create custom visualizations have failed spectacurly with truly unsettling results.
+
+  But, because the entire system has worked so well to this point, I think its worthwhile digging into the  dev notes/code (wherever they are).  I still have hopes of having a set of general purpose data collection and querying tools at the ready--it may involvle chucking the Kibana interface and querying ElasticSearch directly with simple scripts (for my needs the fancy visualizations are overkill, distracting and resource hogs).  
+	  
 ## Sections  
 -- Refereneces  
 -- Overview  
@@ -16,10 +33,10 @@ This is a work in progress and another of my archives of generally useful inform
 -- Metricbeat Service  
 -- Commands and Scripts
 
-- See:  
+## See:  
 -- "References" for useful links.  
 -- "Overview" to see where I am in the process.  
--- "Commands and Scripts" for ...  
+-- "Commands and Scripts"  
 
 # References
 - https://www.xmodulo.com/install-elk-stack-ubuntu.html  
@@ -71,16 +88,18 @@ This is a work in progress and another of my archives of generally useful inform
 	-- implement system.users metricset: https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-metricset-system-users.html  
   --- implement filebeat.system module: https://www.elastic.co/guide/en/beats/filebeat/7.13/filebeat-module-system.html  
 
-- I've given up trying to create visualizations in Kibana because it requires a lot more time (and probably $$$) than I am willing to spend on this project.  I did experience some disturbing data inconsistencies while generating custom Lens, but, if I were using these tools in a professional setting I would follow up with calls to support and/or professional training.   
+- I've given up trying to create visualizations in Kibana because it requires a lot more time (and probably $$$) than I am willing to spend on this project.  I did experience some disturbing data inconsistencies while generating custom Visualizations, but, if I were using these tools in a professional setting I would follow up with calls to support and/or professional training.   
   
   For now I'm focused on using existing dashboards and visualizations, with the idea that discrepancies will be looked up with manual tools at the OS level (rather than digging through the Kibana data).  
 
 - configured remote Linux system with Metricbeat.system and Filebeat.system  
 -- 1. requires estack host configuration steps in "Elastic Search Service/Configure Remote Access"  
+      note, did not need to re-configure Filebeat or Metricbeat to use estack host public ip  
 -- 2. requires installation steps on remote host for Metricbeat and Filebeat  
 
 ## Next  
 - verify Metricbeat.System dashboards are accurate   
+- determine what "process.cgroups.enabled: true" does. The data can be viewed in Discovery but I thought it would show up in the "[Metricbeat System] Host Services Overview" dashboard, but the Visualizations for "Top Services By Memory Usage", "Top Services By Task Count", and "Service Memory Use Over Time" are empty.  
 - setup Windows monitoring  
 - implement metricbeat.system.diskio metricset: https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-metricset-system-diskio.html  
 
@@ -346,6 +365,21 @@ $ sudo tail /var/log/metricbeat
 ## System Module  
 https://www.elastic.co/guide/en/beats/metricbeat/7.x/metricbeat-module-system.html  
 $ sudo nano /etc/metricbeat/modules.d/system.yml  
+
+Enable data for service reporting, requires:  
+https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-metricset-system-service.html  
+$ sudo nano /etc/metricbeat/modules.d/system.yml  
+```Bash
+	# Enable collection of cgroup metrics from processes on Linux.
+	# allows monitoring of process' cpu, memory etc
+  process.cgroups.enabled: true
+	
+	# Filter systemd services by status or sub-status
+  #service.state_filter: ["active"]
+	
+	# Filter systemd services based on a name pattern
+	#service.pattern_filter: ["ssh*", "nfs*"]
+```
 
 ## Apache Metrics Module  
 http://127.0.0.1:5601/app/home#/tutorial/apacheMetrics  
