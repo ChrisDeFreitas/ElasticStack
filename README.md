@@ -7,22 +7,50 @@ I hope the four distinct applications that make up this solution will provide ro
 This is a work in progress and another of my archives of generally useful information that I don't want to lose.  Feel free to use for your own purposes.  
 
 ## Denoument
-At this point the installation and operation of the components documented here are flawless.  These notes cover those aspects of Elastic Stack.  
+At this point the installation and operation of the components documented here are flawless.  This document covers those aspects of Elastic Stack.  
 
-I'm having problems using Kibana and understanding what its' data is saying.  This is the only fault I found so far, but it applies to all the shipped Dashboards.  If I can't understand what the dashboards are supposed to be telling me, I don't know if I can trust the data without extensive testing!  In a professional setting where you're paid to use the tool that's fine--you do the analysis as quick as you can because the effort will be paid back over time.  But in this situation its a lot of time and effort that can be applied to another tool (like Zabbix).  
+I'm having problems using Kibana and understanding what the visuals mean.  This is the only fault I found so far, but it applies to all the shipped Dashboards.  If I can't understand what the dashboards are supposed to be telling me, I don't know if I can trust the data without extensive testing!  In a professional setting where you're paid to use the tool that's fine--you do the analysis as quick as you can because the effort will be paid back over time.  But in this situation its a lot of time and effort that can be applied to simpler and more efficient technologies.  
   
-  To be precise about the nature of the problem, the "[Metricbeat System] Host overview ECS" Dashboard provides socket data for the estack host for the last 3 days:  
+  To be precise about the nature of the problem, the dashboard, "[Metricbeat System] Host overview ECS," provides socket data for the estack host for the last 3 days:  
 
   Inbound Traffic 12.4KB/s  
   Total Transferred 1.9GB  
-    
+  
   Where are the numbers coming from?  How are they calculated?  Is it safe to assume it is the median average for three days?  
   
-  When you edit the Visualization the "Aggregation-based visualization/Metric" editor is presented. But it is not documented online and is not "intuitive". And it clearly needs some explanation because (looking at the editor) these two numbers are calculated in an extremely complex manner.  
+  When you edit the visualization, the "Aggregation-based visualization/Metric" editor is presented. But it is not documented online, and is not "intuitive". And it clearly needs some explanation because (looking at the editor) these two numbers are calculated in an extremely complex manner.  
 
   The online documentation is fine until you ask yourself: what does this really mean, and do these visualizations meet my monitoring needs?  At this point I can't trust the visualizations, and there is a lot that is irrelevant to my needs.  And my efforts to create custom visualizations have failed spectacurly with truly unsettling results.
 
-  But, because the entire system has worked so well to this point, I think its worthwhile digging into the  dev notes/code (wherever they are).  I still have hopes of having a set of general purpose data collection and querying tools at the ready--it may involvle chucking the Kibana interface and querying ElasticSearch directly with simple scripts (for my needs the fancy visualizations are overkill, distracting and resource hogs).  
+  A couple important issues arose in my research:
+	  1. many of the beats and visualizations I'm using are market experimental.
+		2. Reviewing some of GitHub Kibana notes indicate that Kibana is in the midst of a major re-write.
+	
+	Therefore, the Kibana is a moving target until they get the code base stabilized.  For me, I'll be moving onto other projects, perhaps revisiting this effor in a few months to see where Kibana.  I expect to be completing some of the server monitoring ideas by spinning off a new repo focused on system monitoring with basic tools and scripts.  This project really impressed on me how important it is to have those basic tools and concepts in place when digging into OS issues.
+
+
+	```
+	At this point, I need to move onto other projects.  This examination stimulated an idea about creating a simple server monitoring system by cobbling together some tools I have laying about. 	The main ideas:  
+	  1. remotely execute shell commands to gather remote system data  
+		2. store data locally in an sqlite database using the objectLite interface  
+		2. pre: server.name/ip/domain/key/httpd
+		2. pre: iterate remote.name/ip/domain
+		3. automate a post processing phase that will execute a script with the results of a query  
+    3. run: log operations
+    3. run: iterate actionObjects  
+    3. run: json.result.timestamp = server.makeTimestamp( now )  
+    3. run: json.result.remote = server.remote.idJsonGet()  
+    3. run: json.result.status = -1 (ready)
+    3. run: json.result.vars = query vars, sanitized  
+    3. run: json.result.msg  = actionObject.exec( json.result, server )  
+    3. actionObject.exec: verify result.remote = host
+    3. actionObject.exec: exec logic
+    3. actionObject.exec: return object or string
+    3. run: json.result.status = 0 or negative error number
+		4. post: email???
+		4. post: cleanup
+		4. post: close log 
+		```
 	  
 ## Sections  
 -- Refereneces  
@@ -63,6 +91,10 @@ I'm having problems using Kibana and understanding what its' data is saying.  Th
 - https://www.binarytides.com/linux-ss-command/
 - https://blog.confirm.ch/tcp-connection-states/
 
+## Development  
+- https://www.elastic.co/blog/join-our-elastic-stack-workspace-on-slack  
+- https://github.com/elastic  
+- https://github.com/elastic/kibana/blob/master/docs/concepts/index.asciidoc  
 
 
 # Overview
@@ -144,7 +176,7 @@ $ sudo systemctl stop elasticsearch.service
 	$ sudo journalctl --unit elasticsearch --since  "2016-10-30 18:17:16"  
 		
 	View error log:  
-	$ sudo tailo /var/log/elasticsearch/elasticsearch.log  
+	$ sudo tail /var/log/elasticsearch/elasticsearch.log  
 
 - Test service up:  
 $ curl -X GET "localhost:9200/?pretty"  
@@ -469,11 +501,13 @@ $ sudo ss -tup  |grep pid=5992  |wc -l
 $ sudo ss -Hptu |awk '{print $7}' |sort |uniq -c -w25 |sort -r
 ```
 
+## login.sh
 ```Bash
+#!/bin/bash
+
 ## login.sh
 ## call from ~/.profile
 
-#!/bin/bash
 echo 
 echo ss --summary:
 ss -sH
@@ -486,9 +520,28 @@ echo Last 10 logins with reboots etc:
 last -10 -F -i -x
 ```
 
+## login_remote.sh
 ```Bash
-## recentApps.sh
+#!/bin/bash
 
+## login_remote.sh
+## list network stats from remote system
+## assume: ssh server configured in ~/.ssh/ssh_config
+
+remoteHost=192.168.0.255
+echo Network stats for $remoteHost - 
+echo 
+
+ssh $remoteHost '\
+echo ss --summary:; ss -sH; \
+echo ss --listening --query=inet:; ss -ltuH; \
+echo ;\
+echo Last 10 logins with reboots etc:; last -10 -F -i -x ;\
+'
+```
+
+## recentApps.sh
+```Bash
 #!/bin/bash
 echo
 echo 30 recently started apps:
@@ -497,13 +550,47 @@ echo start time user comm tty pid ppid %cpu %mem pri class pri psr
 sudo ps -e --sort=-start -o "start time user comm tty pid ppid %cpu %mem pri class pri psr " | tail -n 30  | sort -r
 ```  
 	
+## recentApps_remote.sh
 ```Bash
-## tcpUsage.sh
-
 #!/bin/bash
+
+## recentApps_remote.sh
+## list 30 recently started apps on remote system
+## assume: ssh server configured in ~/.ssh/ssh_config
+
+remoteHost=192.168.0.255
+echo 30 recently started apps on $remoteHost - 
+echo 
+
+ssh -t $remoteHost '\
+sudo echo ;\
+echo start time user comm tty pid ppid %cpu %mem pri class pri psr  ;\
+sudo ps -e --sort=-start -o "start time user comm tty pid ppid %cpu %mem pri class pri psr " | tail -n 30  | sort -r ;\
+'
+```  
+	
+## tcpUsage.sh
+```Bash
+#!/bin/bash
+
 echo
 echo List processes and count of established connections:
 sudo ss -Hptu |awk '{print $7}' |sort |uniq -c -w25 |sort -r
+```
+
+## tcpUsage_remote.sh
+```Bash
+#!/bin/bash
+
+## tcpUsage_remote.sh
+## list processes and count of established connections on remote system
+## assume: ssh server configured in ~/.ssh/ssh_config
+
+remoteHost=192.168.0.255
+echo List processes and count of established connections on $remoteHost - 
+echo 
+
+ssh -t $remoteHost 'sudo ss -Hptu |awk "{print $7}" |sort |uniq -c -w25 |sort -r '
 ```
 
 # Thanks To  
