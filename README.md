@@ -22,35 +22,12 @@ I'm having problems using Kibana and understanding what the visuals mean.  This 
 
   The online documentation is fine until you ask yourself: what does this really mean, and do these visualizations meet my monitoring needs?  At this point I can't trust the visualizations, and there is a lot that is irrelevant to my needs.  And my efforts to create custom visualizations have failed spectacurly with truly unsettling results.
 
-  A couple important issues arose in my research:
-	  1. many of the beats and visualizations I'm using are market experimental.
-		2. Reviewing some of GitHub Kibana notes indicate that Kibana is in the midst of a major re-write.
-	
+  A couple important issues arose in my research:  
+	  1. many of the beats and visualizations I'm using are marked experimental.  
+		2. Reviewing some of GitHub Kibana notes indicate that Kibana is in the midst of a major re-write.  
+	  
 	Therefore, the Kibana is a moving target until they get the code base stabilized.  For me, I'll be moving onto other projects, perhaps revisiting this effor in a few months to see where Kibana.  I expect to be completing some of the server monitoring ideas by spinning off a new repo focused on system monitoring with basic tools and scripts.  This project really impressed on me how important it is to have those basic tools and concepts in place when digging into OS issues.
 
-
-	```
-	At this point, I need to move onto other projects.  This examination stimulated an idea about creating a simple server monitoring system by cobbling together some tools I have laying about. 	The main ideas:  
-	  1. remotely execute shell commands to gather remote system data  
-		2. store data locally in an sqlite database using the objectLite interface  
-		2. pre: server.name/ip/domain/key/httpd
-		2. pre: iterate remote.name/ip/domain
-		3. automate a post processing phase that will execute a script with the results of a query  
-    3. run: log operations
-    3. run: iterate actionObjects  
-    3. run: json.result.timestamp = server.makeTimestamp( now )  
-    3. run: json.result.remote = server.remote.idJsonGet()  
-    3. run: json.result.status = -1 (ready)
-    3. run: json.result.vars = query vars, sanitized  
-    3. run: json.result.msg  = actionObject.exec( json.result, server )  
-    3. actionObject.exec: verify result.remote = host
-    3. actionObject.exec: exec logic
-    3. actionObject.exec: return object or string
-    3. run: json.result.status = 0 or negative error number
-		4. post: email???
-		4. post: cleanup
-		4. post: close log 
-		```
 	  
 ## Sections  
 -- Refereneces  
