@@ -26,7 +26,7 @@ I'm having problems using Kibana and understanding what the visuals mean.  This 
 	  1. many of the beats and visualizations I'm using are marked experimental.  
 		2. Reviewing some of GitHub Kibana notes indicate that Kibana is in the midst of a major re-write.  
 	  
-	Therefore, the Kibana is a moving target until they get the code base stabilized.  For me, I'll be moving onto other projects, perhaps revisiting this effor in a few months to see where Kibana.  I expect to be completing some of the server monitoring ideas by spinning off a new repo focused on system monitoring with basic tools and scripts.  This project really impressed on me how important it is to have those basic tools and concepts in place when digging into OS issues.
+	Therefore, Kibana is a moving target until they get the code base stabilized.  For me, I'll be moving onto other projects, perhaps revisiting this effort in a few months to see where Kibana is.  I expect to be completing some of the server monitoring ideas by spinning off a new repo focused on system monitoring with basic tools and scripts.  This project really impressed on me how important it is to have those basic tools and concepts in place before digging into OS issues.
 
 	  
 ## Sections  
