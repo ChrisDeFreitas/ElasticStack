@@ -108,6 +108,7 @@ I'm having problems using Kibana and understanding what the visuals mean.  This 
 -- 2. requires installation steps on remote host for Metricbeat and Filebeat  
 
 ## Next  
+- done for now.  Will re-visit in a few months to check on Kibana documentation for "Aggregation-based visualization/Metric editor", which does not exist in the public domain right now.
 - verify Metricbeat.System dashboards are accurate   
 - determine what "process.cgroups.enabled: true" does. The data can be viewed in Discovery but I thought it would show up in the "[Metricbeat System] Host Services Overview" dashboard, but the Visualizations for "Top Services By Memory Usage", "Top Services By Task Count", and "Service Memory Use Over Time" are empty.  
 - setup Windows monitoring  
@@ -117,13 +118,13 @@ I'm having problems using Kibana and understanding what the visuals mean.  This 
 - optimize in future: on boot, Kibana establishes 120 TCP4/6 connections to the local ElasticSearch service  
 -- after installing and testing Apache monitoring, Kibana has 163 TCP4/6 connections to local Elastic app
 - Lookup: while installing Filebeat and Metricbeat got this message:  
-"Setting up ML using setup --machine-learning is going to be removed in 8.0.0. Please use the ML app instead."  
+  "Setting up ML using setup --machine-learning is going to be removed in 8.0.0. Please use the ML app instead."  
 - review APM module: https://www.elastic.co/guide/en/kibana/7.13/xpack-apm.html  
 - review Winlogbeat module: https://www.elastic.co/guide/en/beats/winlogbeat/7.13/winlogbeat-installation-configuration.html  
 - review Elastic Security: https://www.elastic.co/guide/en/kibana/7.13/xpack-siem.html  
 -- requires Basic subscription:  https://www.elastic.co/subscriptions, but how to subscribe?  
 
-# Elastic Search Service
+# Elastic Search Service  
 https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html#deb-repo  
 https://www.elastic.co/guide/en/elasticsearch/reference/current/settings.html  
 
@@ -241,7 +242,7 @@ https://www.elastic.co/guide/en/beats/filebeat/7.13/configuration-filebeat-modul
 $ curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.13.0-amd64.deb  
 $ sudo dpkg -i filebeat-7.13.0-amd64.deb  
 
-- (if needed) confiugre remote estack host:  
+- (if needed) configure remote estack host:  
 $ sudo nano /etc/filebeat/filebeat.yml  
 ```Bash
 setup.kibana:  
@@ -503,9 +504,17 @@ last -10 -F -i -x
 
 ## login_remote.sh
 ## list network stats from remote system
-## assume: ssh server configured in ~/.ssh/ssh_config
+## assume: ssh server configured in ~/.ssh/config
 
-remoteHost=192.168.0.255
+remoteHost=$1
+
+if [ -z "$remoteHost" ];
+then
+	#remoteHost=192.168.0.255
+  echo "  Error: arg1 must be server name or ip (arg1 = $remoteHost)."
+  exit -1
+fi
+
 echo Network stats for $remoteHost - 
 echo 
 
@@ -533,9 +542,17 @@ sudo ps -e --sort=-start -o "start time user comm tty pid ppid %cpu %mem pri cla
 
 ## recentApps_remote.sh
 ## list 30 recently started apps on remote system
-## assume: ssh server configured in ~/.ssh/ssh_config
+## assume: ssh server configured in ~/.ssh/config
 
-remoteHost=192.168.0.255
+remoteHost=$1
+
+if [ -z "$remoteHost" ];
+then
+	#remoteHost=192.168.0.255
+  echo "  Error: arg1 must be server name or ip (arg1 = $remoteHost)."
+  exit -1
+fi
+
 echo 30 recently started apps on $remoteHost - 
 echo 
 
@@ -561,9 +578,17 @@ sudo ss -Hptu |awk '{print $7}' |sort |uniq -c -w25 |sort -r
 
 ## tcpUsage_remote.sh
 ## list processes and count of established connections on remote system
-## assume: ssh server configured in ~/.ssh/ssh_config
+## assume: ssh server configured in ~/.ssh/config
 
-remoteHost=192.168.0.255
+remoteHost=$1
+
+if [ -z "$remoteHost" ];
+then
+	#remoteHost=192.168.0.255
+  echo "  Error: arg1 must be server name or ip (arg1 = $remoteHost)."
+  exit -1
+fi
+
 echo List processes and count of established connections on $remoteHost - 
 echo 
 

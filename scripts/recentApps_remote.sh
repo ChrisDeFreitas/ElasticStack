@@ -4,7 +4,16 @@
 ## list 30 recently started apps on remote system
 ## assume: ssh server configured in ~/.ssh/ssh_config
 
-remoteHost=192.168.0.255
+
+remoteHost=$1
+
+if [ -z "$remoteHost" ];
+then
+	#remoteHost=192.168.0.255
+  echo "  Error: arg1 must be server name or ip (arg1 = $remoteHost)."
+  exit -1
+fi
+
 echo 30 recently started apps on $remoteHost - 
 echo 
 
