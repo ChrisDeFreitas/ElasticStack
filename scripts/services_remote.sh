@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## services_remote.sh
-## list enabled services/daemons on remote system
+## list enabled services/daemons on a remote system
 ## assume: ssh server configured in ~/.ssh/config
 
 remoteHost=$1
