@@ -601,7 +601,7 @@ ssh -t $remoteHost 'sudo ss -Hptu |awk "{print $7}" |sort |uniq -c -w25 |sort -r
 #!/bin/bash
 
 ## services_remote.sh
-## list enable systemv services on remote system
+## list enable services/daemons on remote system
 ## assume: ssh server configured in ~/.ssh/config
 
 remoteHost=$1
