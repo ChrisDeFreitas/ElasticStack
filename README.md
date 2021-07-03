@@ -595,6 +595,30 @@ echo
 ssh -t $remoteHost 'sudo ss -Hptu |awk "{print $7}" |sort |uniq -c -w25 |sort -r '
 ```
 
+
+## services_remote.sh
+```Bash
+#!/bin/bash
+
+## services_remote.sh
+## list enable systemv services on remote system
+## assume: ssh server configured in ~/.ssh/config
+
+remoteHost=$1
+
+if [ -z "$remoteHost" ];
+then
+        remoteHost="xfce"
+  #echo "  Error: arg1 must be server name or ip (arg1 = $remoteHost)."
+  #exit -1
+fi
+
+echo Enabled services on $remoteHost -
+echo
+
+ssh -t $remoteHost 'sudo systemctl list-unit-files --type=service | grep enabled'
+```
+
 # Thanks To  
 https://github.com    
 https://debian.org    
